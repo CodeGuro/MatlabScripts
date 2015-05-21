@@ -78,7 +78,7 @@ while ~finished
 
     if size( find( abs( vecX - new_vecX ) > 1E-3 ), 1 ) == 0
         finished=true;
-        vecX-new_vecX %display difference
+        vecX-new_vecX; %steady state should differ by below 1E-3
     end
 
     vecX = new_vecX;
@@ -89,21 +89,18 @@ while ~finished
     iteration = iteration + 1;
 end
 
-% now that we've found a solution, we can start the perturbations
-
+% now that we've found a steady state, we can start the perturbations
 perturb_amount = -0.1;
 steady_vecX = vecX;
 matdeltaX = NaN( n, n );
 
 
 for p = 1:n % perturbation index
-    finished = false;
     
-    new_vecX = zeros( n, 1 );
-    vecX= zeros( n, 1 );
     new_vecX( p ) = steady_vecX( p ) + perturb_amount;
     vecX( p ) = steady_vecX( p ) + perturb_amount;
     iteration = 1;
+    finished = false;
     
     while ~finished
 
@@ -146,7 +143,7 @@ for p = 1:n % perturbation index
 
         if size( find( abs( vecX - new_vecX ) > 1E-3 ), 1 ) == 0
             finished=true;
-            vecDiff = vecX-new_vecX %steady state should differ by below 1E-3
+            vecDiff = vecX-new_vecX; %steady state should differ by below 1E-3
             
             vecdeltaX = new_vecX - steady_vecX;
             matdeltaX( p, : ) = vecdeltaX;
@@ -176,5 +173,5 @@ end
 
 matA_recovered = abs(lin_mat) > 1E-2;
 matA_logical = logical( matA );
-numMistakes = nnz( matA_logical - matA_recovered )
+numMistakes = nnz( matA_logical - matA_recovered );
 
