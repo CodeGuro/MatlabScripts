@@ -1,6 +1,3 @@
-% %useful function: combnk(x,n) makes all combinations of n components from a
-% vector 'x'
-
 % generate the random n x n matrix
 n = 3;
 matA = [0 1 0; 0 0 1; 1 0 0]; %randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
@@ -91,21 +88,15 @@ while ~finished
 
     vecX = new_vecX;
 
-    % matVecXItr (change in X with every iteration)
-    for vecXItr = 1 : size( vecX, 1 )
-        matVecXItr( vecXItr, iteration + 1 ) = vecX( vecXItr );
-    end
-
     if iteration >= maxIterations
         break;
     end
     iteration = iteration + 1;
 end
 
-% we've found a solution
-steady_vecX = vecX;
-for steadyItr = 1 : size( steady_vecX, 1 )
-    matSteadyVecX( :, recompute_itr + 1 ) = steady_vecX;
+% matVecXItr (change in X with every iteration)
+for vecXItr = 1 : size( vecX, 1 )
+    matVecXItr( vecXItr, iteration + 1 ) = vecX( vecXItr );
 end
 
 % display
