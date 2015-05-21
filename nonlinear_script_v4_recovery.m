@@ -103,6 +103,7 @@ for p = 1:n % perturbation index
     vecX= zeros( n, 1 );
     new_vecX( p ) = steady_vecX( p ) + perturb_amount;
     vecX( p ) = steady_vecX( p ) + perturb_amount;
+    iteration = 1;
     
     while ~finished
 
@@ -151,7 +152,12 @@ for p = 1:n % perturbation index
             matdeltaX( p, : ) = vecdeltaX;
         end
 
-    vecX = new_vecX;
+        vecX = new_vecX;
+        
+        if iteration >= maxIterations
+            break;
+        end
+        iteration = iteration + 1;
 
     end
     
@@ -170,4 +176,5 @@ end
 
 matA_recovered = abs(lin_mat) > 1E-2;
 matA_logical = logical( matA );
+numMistakes = nnz( matA_logical - matA_recovered )
 
