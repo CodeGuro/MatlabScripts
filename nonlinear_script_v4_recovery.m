@@ -65,16 +65,18 @@ while ~finished
 
         %now to begin the denominator product
         product_den = 1; % default
-        for j = 1 : size( setsJ{ i }, 2 )
-            jval = setsJ{ i }{ j };
-            product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
+        if size( setsJ, 2 ) >= i
+            for j = 1 : size( setsJ{ i }, 2 )
+                jval = setsJ{ i }{ j };
+                product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
+            end
         end
 
         new_vecX( i ) = sum_num / product_den;
 
     end
 
-    if size( find( abs( vecX - new_vecX ) > 0.001 ), 1 ) == 0
+    if size( find( abs( vecX - new_vecX ) > 1E-3 ), 1 ) == 0
         finished=true;
         vecX-new_vecX %display difference
     end
@@ -130,9 +132,11 @@ for p = 1:n % perturbation index
 
                 %now to begin the denominator product
                 product_den = 1; % default
-                for j = 1 : size( setsJ{ i }, 2 )
-                    jval = setsJ{ i }{ j };
-                    product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
+                if size( setsJ, 2 ) >= i
+                    for j = 1 : size( setsJ{ i }, 2 )
+                        jval = setsJ{ i }{ j };
+                        product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
+                    end
                 end
 
                 new_vecX( i ) = sum_num / product_den;
