@@ -1,6 +1,6 @@
 % generate the random n x n matrix
 n = 3;
-matA = [0 1 0; 0 0 1; 1 0 0]; %randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
+matA = randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
 matN = matA * 2;
