@@ -90,16 +90,16 @@ while ~finished
 end
 
 % now that we've found a steady state, we can start the perturbations
+noise = rand(n,1);
+sigma = 0;
 noise_multiplyer = 1;
 perturb_amount = -0.1;
 steady_state_vecX = vecX;
 matdeltaX = NaN( n, n );
 vecMistakes = [];
-maxSigma = 30;
 
-for sigma = 1:maxSigma
+for sigma = 1:10
 
-    noise = rand(n,1);
     steady_vecX = steady_state_vecX + noise*sigma*noise_multiplyer;
     for p = 1:n % perturbation index
 
@@ -179,12 +179,8 @@ for sigma = 1:maxSigma
 
     matA_recovered = abs(lin_mat) > 1E-2;
     matA_logical = logical( matA );
-    numMistakes = nnz( matA_logical - matA_recovered );
-    vecMistakes(sigma, 1) = numMistakes;
+    numMistakes = nnz( matA_logical - matA_recovered )
+    noise = noise
+    sigma = sigma
 end
-
-
-plot(1:maxSigma, vecMistakes);
-xlabel('sigma');
-ylabel('recov_mistakes');
 
