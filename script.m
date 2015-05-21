@@ -35,4 +35,8 @@ for current = 1 : n
     matA_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
     matA_cur_row = insert( matA_cur_row, 0, current );
     matA_rec( current, : ) = matA_cur_row;
+    
+    matA_cur_col = matdeltaX( current, : )';
+    matA_cur_col(current)=0;
+    matA_cur_row_s = matdeltaX \ matA_cur_col;
 end
