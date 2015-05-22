@@ -38,7 +38,7 @@ end
 %prepare for convergence
 vecX = zeros( n, 1 );
 iteration = 1;
-maxIterations = 10000;
+maxIterations = 1000;
 finished = false;
 
 %start the convergence
@@ -46,9 +46,12 @@ while ~finished
 
     next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
 
-    if size( find( abs( vecX - next_vecX ) > 1E-5 ), 1 ) == 0 || iteration >= maxIterations
+    if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
-        vecDiff = vecX-next_vecX; %steady state should differ by below 1E-5
+        if iteration >= maxIterations
+            disp('warning! max iteration exceeded!');
+        end
+        vecDiff = vecX-next_vecX; %steady state should differ by below 1E-3
     else
         vecX = next_vecX;
     end
@@ -57,12 +60,12 @@ while ~finished
 end
 
 % now that we've found a steady state, we can start the perturbations
-perturb_amount = -0.1;
+perturb_amount = -1;
 steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
 vecMistakes = [];
-sigmas = 0:0;%0:0.1:1;
+sigmas = 0:0.001:0.1;
 
 for sigma_it = 1:size(sigmas,2)
 
@@ -78,12 +81,16 @@ for sigma_it = 1:size(sigmas,2)
             next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
             next_vecX( p ) = steady_vecX( p ) + perturb_amount;
 
-            if size( find( abs( vecX - next_vecX ) > 1E-5 ), 1 ) == 0 || iteration >= maxIterations
+            if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
                 finished=true;
-                vecDiff = vecX-next_vecX; % if difference is < 1E-5, consider this a steady state
+                if iteration >= maxIterations
+                    disp('warning! max iteration exceeded! aborting...');
+                end
+                vecDiff = vecX-next_vecX; % if difference is < 1E-3, consider this a steady state
                 
                 sigma = randn(n, 1) * sigmas( sigma_it );
                 perturbed_i_steady_vecX = next_vecX + sigma;
+                perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
                 vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
                 matdeltaX( p, : ) = vecdeltaX;
             else
