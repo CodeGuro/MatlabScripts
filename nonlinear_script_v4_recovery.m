@@ -5,14 +5,17 @@ matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
 matN = matA * 2;
 vecX = zeros( n, 1 ); % the gene expressions
-new_vecX = zeros( n, 1 ); % refresh
+next_vecX = zeros( n, 1 ); % expression levels for next iteration
 setsJ = {};
 powerSetsJ = {};
 alphas = {};
+alpha_null = rand( n, 1 );
 
+% generate setsJ, powerSetsJ, and matK
 for i = 1 : n
     vecIdx = find( matA( i, : ) );
     pSet = {};
+    setsJ{ i } = {};
     for j = 1 : length( vecIdx )
         % fill the K(i,j) uniformly [0,1] where matA(i,j)==1
         matK( i, vecIdx( j ) ) = rand();
@@ -32,138 +35,63 @@ for i = 1 : size( powerSetsJ, 2 )
     end
 end
 
-alpha_null = rand( n, 1 );
-
-    
+%prepare for convergence
 vecX = zeros( n, 1 );
-new_vecX = zeros( n, 1 );
-
 iteration = 1;
-maxIterations = 1000;
+maxIterations = 10000;
 finished = false;
+
+%start the convergence
 while ~finished
 
-    for i = 1 : n
-        vecJ = find( matA( i, : ) );
-        sum_num = 0; % sum in the numerator
+    next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
 
-        % begin evaluating the sum (numerator)
-        for j = 1 : size( powerSetsJ{ i }, 2 )
-            product = 1;
-            for it = 1 : size( powerSetsJ{ i }{ j }, 2 )
-                vec = powerSetsJ{ i }{ j };
-                alpha = alphas{ i }{ j };
-                for it2 = 1 : size( vec, 2 )
-                    product = product * epsilonfunc( i, vec( it2 ), vecX, matK, matN );
-                end
-                product = product * alpha;
-            end
-            sum_num = sum_num + product;
-        end
-
-        sum_num = sum_num + alpha_null( i );
-
-        %now to begin the denominator product
-        product_den = 1; % default
-        if size( setsJ, 2 ) >= i
-            for j = 1 : size( setsJ{ i }, 2 )
-                jval = setsJ{ i }{ j };
-                product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
-            end
-        end
-
-        new_vecX( i ) = sum_num / product_den;
-
-    end
-
-    if size( find( abs( vecX - new_vecX ) > 1E-3 ), 1 ) == 0
+    if size( find( abs( vecX - next_vecX ) > 1E-5 ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
-        vecX-new_vecX; %steady state should differ by below 1E-3
+        vecDiff = vecX-next_vecX; %steady state should differ by below 1E-5
+    else
+        vecX = next_vecX;
     end
 
-    vecX = new_vecX;
-
-    if iteration >= maxIterations
-        break;
-    end
     iteration = iteration + 1;
 end
 
 % now that we've found a steady state, we can start the perturbations
-noise_multiplyer = 1;
 perturb_amount = -0.1;
 steady_state_vecX = vecX;
+steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
 vecMistakes = [];
-maxSigma = 30;
+sigmas = 0:0;%0:0.1:1;
 
-for sigma = 1:maxSigma
+for sigma_it = 1:size(sigmas,2)
 
-    noise = rand(n,1);
-    steady_vecX = steady_state_vecX + noise*sigma*noise_multiplyer;
     for p = 1:n % perturbation index
 
-        new_vecX( p ) = steady_vecX( p ) + perturb_amount;
+        vecX = steady_vecX;
         vecX( p ) = steady_vecX( p ) + perturb_amount;
         iteration = 1;
         finished = false;
 
         while ~finished
 
-            for i = 1 : n
-                if i ~= p
+            next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
+            next_vecX( p ) = steady_vecX( p ) + perturb_amount;
 
-                    vecJ = find( matA( i, : ) );
-                    sum_num = 0; % sum in the numerator
-
-                    % begin evaluating the sum (numerator)
-                    for j = 1 : size( powerSetsJ{ i }, 2 )
-                        product = 1;
-                        for it = 1 : size( powerSetsJ{ i }{ j }, 2 )
-                            vec = powerSetsJ{ i }{ j };
-                            alpha = alphas{ i }{ j };
-                            % iterator through the vector (i.e. [1,3] from example)
-                            for it2 = 1 : size( vec, 2 )
-                                product = product * epsilonfunc( i, vec( it2 ), vecX, matK, matN );
-                            end
-                            product = product * alpha;
-                        end
-                        sum_num = sum_num + product;
-                    end
-
-                    sum_num = sum_num + alpha_null( i );
-                    %sum_num is now the complete for row i
-
-                    %now to begin the denominator product
-                    product_den = 1; % default
-                    if size( setsJ, 2 ) >= i
-                        for j = 1 : size( setsJ{ i }, 2 )
-                            jval = setsJ{ i }{ j };
-                            product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
-                        end
-                    end
-
-                    new_vecX( i ) = sum_num / product_den;
-                end
-            end
-
-            if size( find( abs( vecX - new_vecX ) > 1E-3 ), 1 ) == 0
+            if size( find( abs( vecX - next_vecX ) > 1E-5 ), 1 ) == 0 || iteration >= maxIterations
                 finished=true;
-                vecDiff = vecX-new_vecX; %steady state should differ by below 1E-3
-
-                vecdeltaX = new_vecX - steady_vecX;
+                vecDiff = vecX-next_vecX; % if difference is < 1E-5, consider this a steady state
+                
+                sigma = randn(n, 1) * sigmas( sigma_it );
+                perturbed_i_steady_vecX = next_vecX + sigma;
+                vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
                 matdeltaX( p, : ) = vecdeltaX;
-            end
-
-            vecX = new_vecX;
-
-            if iteration >= maxIterations
-                break;
+            else
+                vecX = next_vecX;
+                prev_vecX = next_vecX;
             end
             iteration = iteration + 1;
-
         end
-
     end
 
 
@@ -180,11 +108,14 @@ for sigma = 1:maxSigma
     matA_recovered = abs(lin_mat) > 1E-2;
     matA_logical = logical( matA );
     numMistakes = nnz( matA_logical - matA_recovered );
-    vecMistakes(sigma, 1) = numMistakes;
+    vecMistakes(sigma_it, 1) = numMistakes;
+    sigma_it = sigma_it+1;
 end
 
 
-plot(1:maxSigma, vecMistakes);
+plot(sigmas, vecMistakes);
 xlabel('sigma');
 ylabel('recov_mistakes');
+
+
 

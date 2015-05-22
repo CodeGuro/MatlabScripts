@@ -74,7 +74,7 @@ while ~finished
         %now to begin the denominator product
         for j = 1 : size( setsJ{ i }, 2 )
             jval = setsJ{ i }{ j };
-            product_den = product_den * ( 1 + epsilonfunc( i, vec( it2 ), vecX, matK, matN ) );
+            product_den = product_den * ( 1 + epsilonfunc( i, jval, vecX, matK, matN ) );
         end
 
         new_vecX( i ) = sum_num / product_den;
