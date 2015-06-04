@@ -1,5 +1,5 @@
 % construct the vectors
-n = 3; % size
+n = 10; % size
 matA = randi([1;10], n, n );
 matA( logical( eye( n ) ) ) = 0;
 vecb = randi( [0;10], length( matA ), 1 );
@@ -37,10 +37,16 @@ for sigma_it = 1:size(sigmas,2)
     for current = 1 : n
         selection = setdiff( 1:n, current );
         matA_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
-        matA_cur_row = insert( matA_cur_row, 0, current );
+        matA_cur_row = insert( matA_cur_row, 0 + sigmas( sigma_it ) * randn(), current );
         matA_rec( current, : ) = matA_cur_row;
     end
 
-    numMistakes = abs( nnz( matA ) - nnz( matA_rec ) );
-    vecmistakes( sigma_it, 1 ) = numMistakes;
+    numMistakes = abs( nnz( matA ) - nnz( matA_rec > 1E-3) );
+    vecMistakes( sigma_it, 1 ) = numMistakes;
 end
+
+ys = smooth( sigmas, vecMistakes, 0.25, 'rloess' );
+plot( sigmas, vecMistakes, sigmas, ys );
+legend( 'raw sample data', 'smoothed samle data' );
+xlabel('sigma');
+ylabel('recov_mistakes');

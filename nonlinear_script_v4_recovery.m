@@ -108,7 +108,7 @@ for sigma_it = 1:size(sigmas,2)
     for current = 1 : n
         selection = setdiff( 1:n, current );
         lin_mat_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
-        lin_mat_cur_row = insert( lin_mat_cur_row, 0, current );
+        lin_mat_cur_row = insert( lin_mat_cur_row, 0 + sigmas( sigma_it ) * randn(), current );
         lin_mat( current, : ) = lin_mat_cur_row;
     end
 
