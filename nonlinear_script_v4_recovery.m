@@ -119,8 +119,9 @@ for sigma_it = 1:size(sigmas,2)
     sigma_it = sigma_it+1;
 end
 
-
-plot(sigmas, vecMistakes);
+ys = smooth( sigmas, vecMistakes, 0.25, 'rloess' );
+plot( sigmas, vecMistakes, sigmas, ys );
+legend( 'raw sample data', 'smoothed samle data' );
 xlabel('sigma');
 ylabel('recov_mistakes');
 
