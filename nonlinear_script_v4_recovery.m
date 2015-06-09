@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 5;
+n = 4;
 matA = randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
@@ -42,9 +42,15 @@ maxIterations = 1000;
 finished = false;
 
 %start the convergence
+c = 1;
 while ~finished
 
+    c
+    c=c+1;
     next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
+    for s = next_vecX'
+        s
+    end
 
     if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
@@ -89,7 +95,7 @@ for sigma_it = 1:size(sigmas,2)
                 vecDiff = vecX-next_vecX; % if difference is < 1E-3, consider this a steady state
                 
                 sigma = randn(n, 1) * sigmas( sigma_it );
-                perturbed_i_steady_vecX = next_vecX + sigma;
+                perturbed_i_steady_vecX = next_vecX;
                 perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
                 vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
                 matdeltaX( p, : ) = vecdeltaX;
@@ -108,7 +114,7 @@ for sigma_it = 1:size(sigmas,2)
     for current = 1 : n
         selection = setdiff( 1:n, current );
         lin_mat_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
-        lin_mat_cur_row = insert( lin_mat_cur_row, 0 + sigmas( sigma_it ) * randn(), current );
+        lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
         lin_mat( current, : ) = lin_mat_cur_row;
     end
 

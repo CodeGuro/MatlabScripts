@@ -1,5 +1,5 @@
 % construct the vectors
-n = 10; % size
+n = 3; % size
 matA = randi([1;10], n, n );
 matA( logical( eye( n ) ) ) = 0;
 vecb = randi( [0;10], length( matA ), 1 );
