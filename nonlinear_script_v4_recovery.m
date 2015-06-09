@@ -65,7 +65,7 @@ steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
 vecMistakes = [];
-sigmas = 0:0.001:0.1;
+sigmas = 0:0.01:0.1;
 
 for sigma_it = 1:size(sigmas,2)
 
