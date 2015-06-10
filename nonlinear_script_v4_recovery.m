@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 4;
+n = 2;
 matA = randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );

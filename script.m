@@ -1,8 +1,10 @@
 % construct the vectors
-n = 3; % size
+n = 10; % size
 matA = randi([1;10], n, n );
 matA( logical( eye( n ) ) ) = 0;
-vecb = randi( [0;10], length( matA ), 1 );
+b_min = 1E-5;
+b_max = 10;
+vecb = b_min + (b_max - b_min).*rand( [n,1] );
 vecMistakes = [];
 sigmas = 0:1E-3:0.1;
 
@@ -14,19 +16,10 @@ matdeltaX = nan( n, n );
 % find the new states for all vecx(setdiff(1:n,i)) when vecx(i) is changed
 for sigma_it = 1:size(sigmas,2)
     h = 1;
+    
     for current = 1 : n
-        selection = setdiff( 1:n, current );
-        extracted_matA = matA( selection, current );
-        % the arithmatic is performed here
-        vecxp = (eye( n - 1 ) - matA( selection, selection ) )\( extracted_matA*( vecx(current)+h ) + vecb(selection) );
-        % sanity check
-        sanity_vecxp = matA( selection, selection ) * vecxp + extracted_matA*( vecx(current)+h ) + vecb( selection );
-
-        %insert the x_i+h to vecxp to the i'th index
-        noise = randn(n, 1) * sigmas( sigma_it );
-        vecxp = insert( vecxp, vecx( current ) + h, current )';
-        vecxp = vecxp + noise;
-        vecdeltaX = vecxp - vecx;
+        vecx_p = perturb_lin( n, matA, vecx, vecb, current, h, sigmas(sigma_it) );
+        vecdeltaX = vecx_p - vecx;
 
         %insert into the delta matrix
         matdeltaX( current, : ) = vecdeltaX;
