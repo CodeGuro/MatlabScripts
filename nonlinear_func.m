@@ -1,4 +1,4 @@
-function next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null )
+function next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null )
     next_vecX = zeros( n, 1 );
     for i = 1 : n
         sum_num = eval_sum_num_i( i, vecX, matK, matN, powerSetsJ, alphas, alpha_null );

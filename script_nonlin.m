@@ -45,7 +45,7 @@ finished = false;
 %start the convergence
 while ~finished
 
-    next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
+    next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
 
     if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
@@ -79,7 +79,7 @@ for sigma_it = 1:size(sigmas,2)
 
         while ~finished
 
-            next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
+            next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
             next_vecX( p ) = steady_vecX( p ) + perturb_amount;
 
             if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
