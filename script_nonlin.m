@@ -1,6 +1,7 @@
 % generate the random n x n matrix
 n = 3;
-matA = randi( [0;1], n, n ); %[0,1,1;1,0,0;1,1,0];%
+A_limiter = 0.8;
+matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
 matN = matA * 2;
@@ -42,15 +43,9 @@ maxIterations = 1000;
 finished = false;
 
 %start the convergence
-c = 1;
 while ~finished
 
-    c
-    c=c+1;
     next_vecX = converge( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
-    for s = next_vecX'
-        s
-    end
 
     if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
@@ -122,7 +117,6 @@ for sigma_it = 1:size(sigmas,2)
     matA_logical = logical( matA );
     numMistakes = nnz( matA_logical - matA_recovered );
     vecMistakes(sigma_it, 1) = numMistakes;
-    sigma_it = sigma_it+1;
 end
 
 ys = smooth( sigmas, vecMistakes, 0.25, 'rloess' );

@@ -4,7 +4,7 @@ A_limiter = 0.8;
 mistake_threshold = 1E-1;
 lb = mistake_threshold;
 ub = 1;
-matA = rand(n,n) > 0.8;
+matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros(n,n); %declare so dimensions match
 matK(matA) = lb + (ub-lb).*rand(nnz(matA),1); % K_ij =/= 0 --> A_ij =/= 0
