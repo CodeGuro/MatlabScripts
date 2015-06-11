@@ -13,8 +13,8 @@ sanity_vecx = matA * vecx + vecb;
 %prepare for pertubations
 matdeltaX = nan( n, n );
 pert_amount = 1;
-pert_samples = 100;
-mistakeDiff_threshold = 1E-3;
+pert_samples = 20;
+mistakeDiff_threshold = 1E-1;
 
 sigmas = 0:1E-3:0.1;
 %pre allocate for speed
@@ -49,7 +49,7 @@ for sigma_it = 1:size(sigmas,2)
             matA_rec( p_idx, : ) = matA_cur_row;
         end
         
-        numMistakes = abs( nnz( matA ) - nnz( matA_rec > mistakeDiff_threshold) );
+        numMistakes = nnz( logical( matA ) - logical( abs(matA_rec) > mistakeDiff_threshold ) );
         vecMistakes( sample_num ) = numMistakes;
         min_devs( sample_num ) = min(vecMistakes);
         max_devs( sample_num ) = max(vecMistakes);
