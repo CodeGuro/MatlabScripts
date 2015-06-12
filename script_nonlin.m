@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 10;
+n = 4;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -53,7 +53,7 @@ while ~finished
         if iteration >= maxIterations
             disp('warning! max iteration exceeded!');
         end
-        vecDiff = vecX-next_vecX; %steady state should differ by below 1E-3
+        vecDiff = vecX-next_vecX;
     else
         vecX = next_vecX;
     end
@@ -88,16 +88,16 @@ for sigma_it = 1:size(sigmas,2)
                 if iteration >= maxIterations
                     disp('warning! max iteration exceeded! aborting...');
                 end
-                vecDiff = vecX-next_vecX; % if difference is < 1E-3, consider this a steady state
+                vecDiff = vecX-next_vecX;
                 
-                sigma = randn(n, 1) * sigmas( sigma_it );
+                noise = randn(n, 1) * sigmas( sigma_it );
                 perturbed_i_steady_vecX = next_vecX;
                 perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
+                perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
                 vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
                 matdeltaX( p, : ) = vecdeltaX;
             else
                 vecX = next_vecX;
-                prev_vecX = next_vecX;
             end
             iteration = iteration + 1;
         end
