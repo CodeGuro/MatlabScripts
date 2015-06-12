@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 4;
+n = 10;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -43,6 +43,7 @@ maxIterations = 1000;
 itDiff_threshold = 1E-8;
 finished = false;
 
+
 %start the convergence
 while ~finished
 
@@ -62,69 +63,75 @@ while ~finished
 end
 
 % now that we've found a steady state, we can start the perturbations
-perturb_amount = -1;
+perturb_amount = 0.5;
+perturb_samples = 15;
 steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
-vecMistakes = [];
 sigmas = 0:0.01:0.1;
+vecMistakes_avg = nan(size(sigmas));
+mistake_threshold = 1E-1;
 
 for sigma_it = 1:size(sigmas,2)
+    
+    vecMistakes = nan( 1, perturb_samples );
+    for sample_num = 1:perturb_samples
+        
+        for p = 1:n % perturbation index
 
-    for p = 1:n % perturbation index
+            vecX = steady_vecX;
+            vecX( p ) = steady_vecX( p ) + perturb_amount;
+            iteration = 1;
+            finished = false;
 
-        vecX = steady_vecX;
-        vecX( p ) = steady_vecX( p ) + perturb_amount;
-        iteration = 1;
-        finished = false;
+            while ~finished
 
-        while ~finished
+                next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
+                next_vecX( p ) = steady_vecX( p ) + perturb_amount;
 
-            next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
-            next_vecX( p ) = steady_vecX( p ) + perturb_amount;
+                if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
+                    finished=true;
+                    if iteration >= maxIterations
+                        disp('warning! max iteration exceeded! aborting...');
+                    end
+                    vecDiff = vecX-next_vecX;
 
-            if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
-                finished=true;
-                if iteration >= maxIterations
-                    disp('warning! max iteration exceeded! aborting...');
+                    noise = randn(n, 1) * sigmas( sigma_it );
+                    perturbed_i_steady_vecX = next_vecX;
+                    perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
+                    perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
+                    vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
+                    matdeltaX( p, : ) = vecdeltaX;
+                else
+                    vecX = next_vecX;
                 end
-                vecDiff = vecX-next_vecX;
-                
-                noise = randn(n, 1) * sigmas( sigma_it );
-                perturbed_i_steady_vecX = next_vecX;
-                perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
-                perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
-                vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
-                matdeltaX( p, : ) = vecdeltaX;
-            else
-                vecX = next_vecX;
+                iteration = iteration + 1;
             end
-            iteration = iteration + 1;
         end
+
+
+        % We can now attempt to construct the linear matrix using the offsets
+        % (deltamatX)
+        lin_mat = nan( n, n );
+        for current = 1 : n
+            selection = setdiff( 1:n, current );
+            lin_mat_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
+            lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
+            lin_mat( current, : ) = lin_mat_cur_row;
+        end
+
+        numMistakes = nnz( logical( matK ) - logical( abs(lin_mat) > mistake_threshold ) );
+        vecMistakes( sample_num ) = numMistakes;
     end
-
-
-    % We can now attempt to construct the linear matrix using the offsets
-    % (deltamatX)
-    lin_mat = nan( n, n );
-    for current = 1 : n
-        selection = setdiff( 1:n, current );
-        lin_mat_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
-        lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
-        lin_mat( current, : ) = lin_mat_cur_row;
-    end
-
-    matA_recovered = abs(lin_mat) > 1E-2;
-    matA_logical = logical( matA );
-    numMistakes = nnz( matA_logical - matA_recovered );
-    vecMistakes(sigma_it, 1) = numMistakes;
+    vecMistakes_avg( sigma_it ) = mean( vecMistakes );
 end
 
-ys = smooth( sigmas, vecMistakes, 0.25, 'rloess' );
-plot( sigmas, vecMistakes, sigmas, ys );
-legend( 'raw sample data', 'smoothed samle data' );
+ys = smooth( sigmas, vecMistakes_avg, 0.25, 'rloess' );
+plot( sigmas, vecMistakes_avg);
+legend( 'avg mistakes (raw)', 'avg mistakes (smooth)', 'avg min deviation (raw)', 'avg min deviation (smooth)', 'avg max deviation (raw)', 'avg max deviation (smooth)' );
 xlabel('sigma');
-ylabel('recov_mistakes');
+ylabel('recovery mistakes');
+title(strcat(num2str(n),'X',num2str(n),'nonlinear matrix recovery errors with, ',num2str(perturb_samples),' samples per pertubation'));
 
 
 
