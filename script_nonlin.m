@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 3;
+n = 10;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -40,6 +40,7 @@ end
 vecX = zeros( n, 1 );
 iteration = 1;
 maxIterations = 1000;
+itDiff_threshold = 1E-8;
 finished = false;
 
 %start the convergence
@@ -47,7 +48,7 @@ while ~finished
 
     next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
 
-    if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
+    if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
         finished=true;
         if iteration >= maxIterations
             disp('warning! max iteration exceeded!');
@@ -82,7 +83,7 @@ for sigma_it = 1:size(sigmas,2)
             next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
             next_vecX( p ) = steady_vecX( p ) + perturb_amount;
 
-            if size( find( abs( vecX - next_vecX ) > 1E-3 ), 1 ) == 0 || iteration >= maxIterations
+            if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
                 finished=true;
                 if iteration >= maxIterations
                     disp('warning! max iteration exceeded! aborting...');
