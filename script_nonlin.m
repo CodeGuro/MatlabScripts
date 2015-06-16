@@ -63,7 +63,7 @@ while ~finished
 end
 
 % now that we've found a steady state, we can start the perturbations
-perturb_amount = 0.5;
+perturb_amount = 1;
 perturb_samples = 15;
 steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
