@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 10;
+n = 20;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -101,7 +101,7 @@ for sigma_it = 1:size(sigmas,2)
                     perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
                     perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
                     vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
-                    matdeltaX( p, : ) = vecdeltaX;
+                    matdeltaX( :, p ) = vecdeltaX;
                 else
                     vecX = next_vecX;
                 end
@@ -115,7 +115,7 @@ for sigma_it = 1:size(sigmas,2)
         lin_mat = nan( n, n );
         for current = 1 : n
             selection = setdiff( 1:n, current );
-            lin_mat_cur_row = matdeltaX( selection, selection ) \ matdeltaX( selection, current );
+            lin_mat_cur_row = matdeltaX( current, selection ) / matdeltaX( selection, selection );
             lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
             lin_mat( current, : ) = lin_mat_cur_row;
         end
@@ -126,9 +126,8 @@ for sigma_it = 1:size(sigmas,2)
     vecMistakes_avg( sigma_it ) = mean( vecMistakes );
 end
 
-ys = smooth( sigmas, vecMistakes_avg, 0.25, 'rloess' );
 plot( sigmas, vecMistakes_avg);
-legend( 'avg mistakes (raw)', 'avg mistakes (smooth)', 'avg min deviation (raw)', 'avg min deviation (smooth)', 'avg max deviation (raw)', 'avg max deviation (smooth)' );
+legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
 title(strcat(num2str(n),'X',num2str(n),'nonlinear matrix recovery errors with, ',num2str(perturb_samples),' samples per pertubation'));
