@@ -74,12 +74,15 @@ vecstDevs = nan(size(sigmas));
 mistake_threshold = 1E-1;
 
 for sigma_it = 1:size(sigmas,2)
-    disp(['iterating... sample ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
+    disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
     vecMistakes = nan( 1, perturb_samples );
     for sample_num = 1:perturb_samples
         
+        disp(['iterating... sample ' num2str(sample_num) ' out of ' num2str(perturb_samples)]);
+        
         for p = 1:n % perturbation index
 
+            disp(['perturbation index: ' num2str(p) ' out of ' num2str(n)]);
             vecX = steady_vecX;
             vecX( p ) = steady_vecX( p ) + perturb_amount;
             iteration = 1;
