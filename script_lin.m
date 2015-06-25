@@ -21,9 +21,10 @@ matdeltaX = nan( n, n );
 pert_amount = 1; % this should be scaled up for best results on average
 pert_samples = 20;
 
-sigmas = 0:1E-2:0.1;
+sigmas = 0:0.01:0.1;
 %pre allocate for speed
 vecMistakes_avg = nan(size(sigmas));
+vecstDevs = nan(size(sigmas));
 
 
 % find the new states for all vecx(setdiff(1:n,i)) when vecx(i) is changed
@@ -56,16 +57,17 @@ for sigma_it = 1:size(sigmas,2)
     end
 
     vecMistakes_avg( sigma_it ) = mean( vecMistakes );
+    vecstDevs( sigma_it ) = std( vecMistakes );
 
 end
 
 
-avg_smooth = smooth( sigmas, vecMistakes_avg, 0.25, 'rloess' );
-plot( sigmas, vecMistakes_avg );
-%plot( sigmas, vecMistakes_avg, sigmas, avg_smooth );
+errorbar( sigmas, vecMistakes_avg, vecstDevs, ':o' );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
 title( [num2str(n) 'X' num2str(n) ' matrix of a linear regulatory network, with '...
     num2str(length(sigmas)) ' samples, with '...
-    num2str(pert_samples) ' samples per perturbation'] );
+    num2str(pert_samples) ' samples per perturbation, and '...
+    'perturb amount=' num2str(pert_amount)] );
+axis( [ sigmas(1) sigmas(end) 0 50] );

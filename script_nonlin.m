@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 8;
+n = 10;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -64,12 +64,13 @@ end
 
 % now that we've found a steady state, we can start the perturbations
 perturb_amount = 1;
-perturb_samples = 15;
+perturb_samples = 20;
 steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
 sigmas = 0:1E-2:0.1;
 vecMistakes_avg = nan(size(sigmas));
+vecstDevs = nan(size(sigmas));
 mistake_threshold = 1E-1;
 
 for sigma_it = 1:size(sigmas,2)
@@ -124,15 +125,18 @@ for sigma_it = 1:size(sigmas,2)
         vecMistakes( sample_num ) = numMistakes;
     end
     vecMistakes_avg( sigma_it ) = mean( vecMistakes );
+    vecstDevs( sigma_it ) = std( vecMistakes );
 end
 
-plot( sigmas, vecMistakes_avg);
+errorbar( sigmas, vecMistakes_avg, vecstDevs, ':o' );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
 title( [num2str(n) 'X' num2str(n) ' matrix of a nonlinear regulatory network, with '...
     num2str(length(sigmas)) ' samples, with '...
-    num2str(perturb_samples) ' samples per perturbation' ] );
+    num2str(perturb_samples) ' samples per perturbation, and '...
+    'perturb amount=' num2str(perturb_amount)] );
+axis( [ sigmas(1) sigmas(end) 0 50] );
 
 
 
