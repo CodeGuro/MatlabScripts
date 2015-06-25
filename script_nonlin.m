@@ -1,6 +1,6 @@
 % generate the random n x n matrix
-n = 10;
-A_limiter = 0.8;
+n = 5;
+A_limiter = 0.5;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
@@ -40,7 +40,7 @@ end
 vecX = zeros( n, 1 );
 iteration = 1;
 maxIterations = 1000;
-itDiff_threshold = 1E-8;
+itDiff_threshold = 1E-4;
 finished = false;
 
 
@@ -132,12 +132,12 @@ errorbar( sigmas, vecMistakes_avg, vecstDevs, ':o' );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
-title( [num2str(n) 'X' num2str(n) ' matrix of a nonlinear regulatory network, with '...
+title( {[num2str(n) 'X' num2str(n) ' matrix of a nonlinear regulatory network, with '...
     num2str(length(sigmas)) ' samples, with '...
-    num2str(perturb_samples) ' samples per perturbation, and '...
-    'perturb amount=' num2str(perturb_amount) ', and'...
-    'A limiter=' num2str(A_limiter)] );
-axis( [ sigmas(1) sigmas(end) 0 50] );
+    num2str(perturb_samples) ' samples per perturbation'],...
+    ['perturb amount=' num2str(perturb_amount) ', '...
+    'A limiter=' num2str(A_limiter)]} );
+axis( [ sigmas(1) sigmas(end) 0 10] );
 
 
 

@@ -1,6 +1,6 @@
 % construct the vectors
-n = 10; % size
-A_limiter = 0.8;
+n = 5; % size
+A_limiter = 0.5;
 mistake_threshold = 1E-1;
 lb = mistake_threshold;
 ub = 1;
@@ -66,9 +66,9 @@ errorbar( sigmas, vecMistakes_avg, vecstDevs, ':o' );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
-title( [num2str(n) 'X' num2str(n) ' matrix of a linear regulatory network, with '...
+title( {[num2str(n) 'X' num2str(n) ' matrix of a linear regulatory network, with '...
     num2str(length(sigmas)) ' samples, with '...
-    num2str(pert_samples) ' samples per perturbation, and '...
-    'perturb amount=' num2str(pert_amount) ', and'...
-    'A limiter=' num2str(A_limiter)] );
-axis( [ sigmas(1) sigmas(end) 0 50] );
+    num2str(pert_samples) ' samples per perturbation'],...
+    ['perturb amount=' num2str(pert_amount) ', '...
+    'A limiter=' num2str(A_limiter)]} );
+axis( [ sigmas(1) sigmas(end) 0 10] );
