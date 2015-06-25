@@ -74,7 +74,7 @@ vecstDevs = nan(size(sigmas));
 mistake_threshold = 1E-1;
 
 for sigma_it = 1:size(sigmas,2)
-    
+    disp(['iterating... sample ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
     vecMistakes = nan( 1, perturb_samples );
     for sample_num = 1:perturb_samples
         
