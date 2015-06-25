@@ -1,6 +1,6 @@
 % construct the vectors
 n = 10; % size
-A_limiter = 0.1;
+A_limiter = 0.8;
 mistake_threshold = 1E-1;
 lb = mistake_threshold;
 ub = 1;
@@ -21,7 +21,7 @@ matdeltaX = nan( n, n );
 pert_amount = 1; % this should be scaled up for best results on average
 pert_samples = 20;
 
-sigmas = 0:1E-3:0.1;
+sigmas = 0:1E-2:0.1;
 %pre allocate for speed
 vecMistakes_avg = nan(size(sigmas));
 
@@ -66,4 +66,6 @@ plot( sigmas, vecMistakes_avg );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
-title(strcat(num2str(n),'X',num2str(n),' matrix recovery errors with, ',num2str(pert_samples),' samples per pertubation'));
+title( [num2str(n) 'X' num2str(n) ' matrix of a linear regulatory network, with '...
+    num2str(length(sigmas)) ' samples, with '...
+    num2str(pert_samples) ' samples per perturbation'] );

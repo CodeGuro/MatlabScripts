@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-n = 20;
+n = 8;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
@@ -68,7 +68,7 @@ perturb_samples = 15;
 steady_state_vecX = vecX;
 steady_vecX = steady_state_vecX;
 matdeltaX = NaN( n, n );
-sigmas = 0:0.01:0.1;
+sigmas = 0:1E-2:0.1;
 vecMistakes_avg = nan(size(sigmas));
 mistake_threshold = 1E-1;
 
@@ -130,7 +130,9 @@ plot( sigmas, vecMistakes_avg);
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
-title(strcat(num2str(n),'X',num2str(n),'nonlinear matrix recovery errors with, ',num2str(perturb_samples),' samples per pertubation'));
+title( [num2str(n) 'X' num2str(n) ' matrix of a nonlinear regulatory network, with '...
+    num2str(length(sigmas)) ' samples, with '...
+    num2str(perturb_samples) ' samples per perturbation' ] );
 
 
 
