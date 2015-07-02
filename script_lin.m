@@ -29,10 +29,13 @@ vecstDevs = nan(size(sigmas));
 
 % find the new states for all vecx(setdiff(1:n,i)) when vecx(i) is changed
 for sigma_it = 1:size(sigmas,2)
+    disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
     
     vecMistakes = nan( pert_samples, 1 );
     
     for sample_num = 1:pert_samples
+        
+        disp(['iterating... sample ' num2str(sample_num) ' out of ' num2str(pert_samples)]);
         
         for p_idx = 1 : n
             vecx_p = perturb_lin_v2( n, matK, vecx, vecb, p_idx, pert_amount, sigmas(sigma_it) );
@@ -46,7 +49,7 @@ for sigma_it = 1:size(sigmas,2)
         matK_rec = nan( n, n );
         for p_idx = 1 : n
             selection = setdiff( 1:n, p_idx );
-            matK_cur_row = row_recov_UseInv( matdeltaX( p_idx, selection ), matdeltaX( selection, selection ) );
+            matK_cur_row = row_recov_UseLasso( matdeltaX( p_idx, selection ), matdeltaX( selection, selection ) );
             matK_cur_row = insert( matK_cur_row, 0 + sigmas( sigma_it ) * randn(), p_idx );
             matK_rec( p_idx, : ) = matK_cur_row;
         end

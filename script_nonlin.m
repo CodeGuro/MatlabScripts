@@ -119,7 +119,7 @@ for sigma_it = 1:size(sigmas,2)
         lin_mat = nan( n, n );
         for current = 1 : n
             selection = setdiff( 1:n, current );
-            lin_mat_cur_row = row_recov_UseInv( matdeltaX( current, selection ), matdeltaX( selection, selection ) );
+            lin_mat_cur_row = row_recov_UseLasso( matdeltaX( current, selection ), matdeltaX( selection, selection ) );
             lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
             lin_mat( current, : ) = lin_mat_cur_row;
         end
