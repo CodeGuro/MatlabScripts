@@ -1,6 +1,6 @@
 % generate the random n x n matrix
 n = 5;
-A_limiter = 0.5;
+A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
@@ -119,7 +119,7 @@ for sigma_it = 1:size(sigmas,2)
         lin_mat = nan( n, n );
         for current = 1 : n
             selection = setdiff( 1:n, current );
-            lin_mat_cur_row = matdeltaX( current, selection ) / matdeltaX( selection, selection );
+            lin_mat_cur_row = row_recov_UseInv( matdeltaX( current, selection ), matdeltaX( selection, selection ) );
             lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
             lin_mat( current, : ) = lin_mat_cur_row;
         end
