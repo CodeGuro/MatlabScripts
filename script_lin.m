@@ -1,6 +1,6 @@
 % construct the vectors
-n = 10; % size
-A_limiter = 0.3;
+n = 5; % size
+A_limiter = 0.8;
 mistake_threshold = 1E-1;
 lb = mistake_threshold;
 ub = 1;
@@ -22,14 +22,14 @@ pert_amount = 1; % this should be scaled up for best results on average
 pert_samples = 20;
 perturb_func = @perturb_lin_v2;
 
-sigmas = 0:0.01:0.3;
-lambdas = [2E-1 2E-2 2E-3 2E-4 2E-5];
+sigmas = 0:0.03:0.3;
+lambdas = [ 2E-4 2E-1 2E20];
 %pre allocate for speed
 vecMistakes_avg = nan(size(sigmas));
 vecstDevs = nan(size(sigmas));
 
-vecMistakes_avg_lasso = nan( size(lambdas,2), size(sigmas,2) );
-vecstDevs_lasso = nan( size(lambdas,2), size(sigmas,2) );
+vecMistakes_avg_lasso = nan( length(lambdas), length(sigmas) );
+vecstDevs_lasso = nan( length(lambdas), length(sigmas) );
 
 
 % find the new states for all vecx(setdiff(1:n,i)) when gene i is changed
@@ -37,7 +37,7 @@ for sigma_it = 1:size(sigmas,2)
     disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
     
     vecMistakes = nan( pert_samples, 1 );
-    vecMistakes_lasso = nan( pert_samples, size( lambdas, 2 ) );
+    vecMistakes_lasso = nan( pert_samples, length( lambdas ) );
     
     for sample_num = 1:pert_samples
         
@@ -52,13 +52,13 @@ for sigma_it = 1:size(sigmas,2)
         end
 
         % we can now begin reconstruction of matK using the matdeltaX alone
-        matK_rec = matK_rec_useInv( n, matdeltaX, sigmas, sigma_it );
-        numMistakes = nnz( logical( matK ) - logical( abs(matK_rec) > mistake_threshold ) );
+        matK_rec = matK_rec_useInv( n, matdeltaX );
+        numMistakes = nnz( logical( matA ) - logical( abs(matK_rec) > mistake_threshold ) );
         vecMistakes( sample_num ) = numMistakes;
         
-       	matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, sigmas, sigma_it, lambdas );
-        for z=1:size(lambdas,2)
-            numMistakes_lasso = nnz( logical( matK_recs_lasso(:,:,z) ) - logical( abs(matK_rec) > mistake_threshold ) );
+       	matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas );
+        for z=1:length(lambdas)
+            numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
             vecMistakes_lasso( sample_num, z ) = numMistakes_lasso;
         end
         
@@ -72,17 +72,17 @@ for sigma_it = 1:size(sigmas,2)
 
 end
 
-plot_sigmas = (ones(size(lambdas,2),1)*sigmas)';
+plot_sigmas = (ones(length(lambdas),1)*sigmas)';
 plot_mistakes = vecMistakes_avg_lasso';
 plot_devs = vecstDevs_lasso';
-for lambda_it = 1:size(lambdas,2)
-    legends{lambda_it} = num2str( lambdas(lambda_it) );
+for lambda_it = 1:length(lambdas)
+    legends{lambda_it} = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
 end
 
 plot_sigmas( :, end+1 ) = sigmas;
 plot_mistakes(:, end+1 ) = vecMistakes_avg;
 plot_devs(:, end+1 ) = vecstDevs;
-legends{size(lambdas,2) + 1} = 'inv';
+legends{length(lambdas) + 1} = 'inv';
 
 errorbar( plot_sigmas, plot_mistakes, plot_devs, ':o' );
 legend( 'avg mistakes' );
@@ -93,6 +93,6 @@ title( {[num2str(n) 'X' num2str(n) ' matrix of a linear regulatory network, with
     num2str(length(sigmas)) ' samples, with '...
     num2str(pert_samples) ' samples per perturbation'],...
     ['perturb amount=' num2str(pert_amount) ', '...
-    'A limiter=' num2str(A_limiter)]} );
+    'A limiter=' num2str(A_limiter) ', ' 'nnz(matA)=' num2str(nnz(matA))]} );
 %axis( [ sigmas(1) sigmas(end) 0 10] );
 axis('auto');
