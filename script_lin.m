@@ -75,8 +75,9 @@ end
 plot_sigmas = (ones(length(lambdas),1)*sigmas)';
 plot_mistakes = vecMistakes_avg_lasso';
 plot_devs = vecstDevs_lasso';
+legends = cell( 1, length(lambdas) );
 for lambda_it = 1:length(lambdas)
-    legends{lambda_it} = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
+    legends{ lambda_it } = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
 end
 
 plot_sigmas( :, end+1 ) = sigmas;
