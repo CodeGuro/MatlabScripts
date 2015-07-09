@@ -1,5 +1,5 @@
 % generate the random n x n matrix
-linear = true;
+linear = false;
 n = 10;
 A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
@@ -65,7 +65,7 @@ perturb_amount = 1;
 perturb_samples = 20;
 matdeltaX = NaN( n, n );
 mistake_threshold = 1E-1;
-sigmas = 0:0.03:0.3;
+sigmas = 0:0.03:0.8;
 lambdas = [2E-4 2E-3 2E-2 2E-1 2E0 2E1 2E10];
 vecMistakes_avg = nan(size(sigmas));
 vecstDevs = nan(size(sigmas));
