@@ -1,6 +1,6 @@
 % generate the random n x n matrix
-linear = false;
-n = 10;
+linear = true;
+n = 5;
 A_limiter = 0.4;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
