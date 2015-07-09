@@ -76,7 +76,7 @@ for sigma_it = 1:size(sigmas,2)
 
 end
 
-
+% output
 plot_sigmas = (ones(length(lambdas),1)*sigmas)';
 plot_mistakes = vecMistakes_avg_lasso';
 plot_devs = vecstDevs_lasso';
