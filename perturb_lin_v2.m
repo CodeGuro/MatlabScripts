@@ -8,7 +8,8 @@ function vecx_p = perturb_lin_v2( n, matM, vecx, vecb, p_idx, p_amount, sigma )
     sanity_vecx_p = matM( selection, selection ) * vecx_p + extracted_matM*( vecx(p_idx)+p_amount ) + vecb( selection );
 
     %insert the x_i+h to vecx_p to the i'th index
-    noise = randn(n, 1) *sigma;
+    noise = randn(n, 1) * sigma;
+    noise( p_idx ) = 0;
     vecx_p = insert( vecx_p, vecx( p_idx ) + p_amount, p_idx )';
     vecx_p = vecx_p + noise;
 

@@ -72,8 +72,9 @@ sigmas = 0:1E-2:0.1;
 vecMistakes_avg = nan(size(sigmas));
 vecstDevs = nan(size(sigmas));
 mistake_threshold = 1E-1;
+lambdas = [2E-3 2E-2 2E-1 2E0 2E1 ];
 
-for sigma_it = 1:size(sigmas,2)
+for sigma_it = 1:length(sigmas)
     disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(size(sigmas,2))]);
     vecMistakes = nan( 1, perturb_samples );
     for sample_num = 1:perturb_samples
@@ -101,6 +102,7 @@ for sigma_it = 1:size(sigmas,2)
                     vecDiff = vecX-next_vecX;
 
                     noise = randn(n, 1) * sigmas( sigma_it );
+                    noise(p) = 0;
                     perturbed_i_steady_vecX = next_vecX;
                     perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
                     perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
@@ -115,14 +117,7 @@ for sigma_it = 1:size(sigmas,2)
 
 
         % We can now attempt to construct the linear matrix using the offsets
-        % (deltamatX)
-        lin_mat = nan( n, n );
-        for current = 1 : n
-            selection = setdiff( 1:n, current );
-            lin_mat_cur_row = row_recov_UseInv( matdeltaX( current, selection ), matdeltaX( selection, selection ) );
-            lin_mat_cur_row = insert( lin_mat_cur_row, 0 , current );
-            lin_mat( current, : ) = lin_mat_cur_row;
-        end
+        lin_mat = matK_rec_useInv( n, matdeltaX );
 
         numMistakes = nnz( logical( matK ) - logical( abs(lin_mat) > mistake_threshold ) );
         vecMistakes( sample_num ) = numMistakes;

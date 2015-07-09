@@ -23,7 +23,7 @@ pert_samples = 20;
 perturb_func = @perturb_lin_v2;
 
 sigmas = 0:0.03:0.3;
-lambdas = [];
+lambdas = [2E-4 2E-3 2E-2 2E-1 2E0 2E1 2E10];
 %pre allocate for speed
 vecMistakes_avg = nan(size(sigmas));
 vecstDevs = nan(size(sigmas));
