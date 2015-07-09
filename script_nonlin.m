@@ -44,28 +44,13 @@ itDiff_threshold = 1E-4;
 finished = false;
 
 
-%start the convergence
-while ~finished
-
-    next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
-
-    if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
-        finished=true;
-        if iteration >= maxIterations
-            disp('warning! max iteration exceeded!');
-        end
-        vecDiff = vecX-next_vecX;
-    else
-        vecX = next_vecX;
-    end
-
-    iteration = iteration + 1;
-end
+% find the steady state
+steady_vecX = findSteady_nonlin( n, matK, matN, setsJ, powerSetsJ, alphas, ...
+    alpha_null, itDiff_threshold, maxIterations );
 
 % now that we've found a steady state, we can start the perturbations
 perturb_amount = 1;
 perturb_samples = 20;
-steady_vecX = vecX;
 matdeltaX = NaN( n, n );
 sigmas = 0:1E-2:0.1;
 vecMistakes_avg = nan(size(sigmas));
@@ -87,35 +72,11 @@ for sigma_it = 1:length(sigmas)
         for p = 1:n % perturbation index
 
             disp(['perturbation index: ' num2str(p) ' out of ' num2str(n)]);
-            vecX = steady_vecX;
-            vecX( p ) = steady_vecX( p ) + perturb_amount;
-            iteration = 1;
-            finished = false;
 
-            while ~finished
-
-                next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
-                next_vecX( p ) = steady_vecX( p ) + perturb_amount;
-
-                if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
-                    finished=true;
-                    if iteration >= maxIterations
-                        disp('warning! max iteration exceeded! aborting...');
-                    end
-                    vecDiff = vecX-next_vecX;
-
-                    noise = randn(n, 1) * sigmas( sigma_it );
-                    noise(p) = 0;
-                    perturbed_i_steady_vecX = next_vecX;
-                    perturbed_i_steady_vecX( p ) = steady_vecX( p ) + perturb_amount;
-                    perturbed_i_steady_vecX = perturbed_i_steady_vecX + noise; % noise added here
-                    vecdeltaX = perturbed_i_steady_vecX - steady_vecX;
-                    matdeltaX( :, p ) = vecdeltaX;
-                else
-                    vecX = next_vecX;
-                end
-                iteration = iteration + 1;
-            end
+            vecX_P = perturb_nonlin( n, steady_vecX, matK, matN, setsJ, powerSetsJ, alphas, ...
+                alpha_null, itDiff_threshold, maxIterations, p, perturb_amount, sigmas( sigma_it ) );
+            
+            matdeltaX( :, p ) = vecX_P - steady_vecX;
         end
 
 
