@@ -12,15 +12,13 @@ b_min = 1E-5;
 b_max = ub;
 vecb = b_min + (b_max - b_min).*rand( [n,1] );
 
-% find vector 'x' such that x = A*x + b
-vecx = ( eye( n ) - matK ) \ vecb;
-sanity_vecx = matK * vecx + vecb;
+% find the steady state
+steady_vecX = findSteady_lin( n, matK, vecb );
 
 %prepare for pertubations
 matdeltaX = nan( n, n );
 pert_amount = 1; % this should be scaled up for best results on average
 pert_samples = 20;
-perturb_func = @perturb_lin_v2;
 
 sigmas = 0:0.03:0.3;
 lambdas = [2E-4 2E-3 2E-2 2E-1 2E0 2E1 2E10];
@@ -44,8 +42,8 @@ for sigma_it = 1:size(sigmas,2)
         disp(['iterating... sample ' num2str(sample_num) ' out of ' num2str(pert_samples)]);
         
         for p_idx = 1 : n
-            vecx_p = perturb_func( n, matK, vecx, vecb, p_idx, pert_amount, sigmas(sigma_it) );
-            vecdeltaX = vecx_p - vecx;
+            vecx_p = perturb_lin_v2( n, steady_vecX, matK, vecb, p_idx, pert_amount, sigmas(sigma_it) );
+            vecdeltaX = vecx_p - steady_vecX;
 
             %insert into the delta matrix
             matdeltaX( :, p_idx ) = vecdeltaX;
