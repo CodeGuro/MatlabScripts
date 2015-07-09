@@ -23,7 +23,7 @@ pert_samples = 20;
 perturb_func = @perturb_lin_v2;
 
 sigmas = 0:0.03:0.3;
-lambdas = [ 2E-4 2E-1 2E20];
+lambdas = [];
 %pre allocate for speed
 vecMistakes_avg = nan(size(sigmas));
 vecstDevs = nan(size(sigmas));
@@ -56,10 +56,12 @@ for sigma_it = 1:size(sigmas,2)
         numMistakes = nnz( logical( matA ) - logical( abs(matK_rec) > mistake_threshold ) );
         vecMistakes( sample_num ) = numMistakes;
         
-       	matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas );
-        for z=1:length(lambdas)
-            numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
-            vecMistakes_lasso( sample_num, z ) = numMistakes_lasso;
+        if length(lambdas) > 0
+            matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas );
+            for z=1:length(lambdas)
+                numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
+                vecMistakes_lasso( sample_num, z ) = numMistakes_lasso;
+            end
         end
         
     end
@@ -67,10 +69,13 @@ for sigma_it = 1:size(sigmas,2)
     vecMistakes_avg( sigma_it ) = mean( vecMistakes );
     vecstDevs( sigma_it ) = std( vecMistakes );
     
-    vecMistakes_avg_lasso( :, sigma_it ) = mean( vecMistakes_lasso );
-    vecstDevs_lasso( :, sigma_it ) = std( vecMistakes_lasso );
+    if length(lambdas) > 0
+        vecMistakes_avg_lasso( :, sigma_it ) = mean( vecMistakes_lasso );
+        vecstDevs_lasso( :, sigma_it ) = std( vecMistakes_lasso );
+    end
 
 end
+
 
 plot_sigmas = (ones(length(lambdas),1)*sigmas)';
 plot_mistakes = vecMistakes_avg_lasso';
