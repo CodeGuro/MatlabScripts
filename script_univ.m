@@ -1,7 +1,7 @@
 % generate the random n x n matrix
-linear = true;
+linear = false;
 n = 5;
-A_limiter = 0.4;
+A_limiter = 0.8;
 matA = rand(n,n) > A_limiter;
 matA( logical( eye( n ) ) ) = 0;
 matK = zeros( n, n );
