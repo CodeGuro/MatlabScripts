@@ -1,6 +1,6 @@
 % generate the random n x n matrix
 linear = false;
-n = 5;
+n = 3;
 A_limiter = 0.8;
 numMatrix_samples = 5;
 
@@ -99,7 +99,7 @@ for M_sample = 1:numMatrix_samples
                 matdeltaX( :, p ) = vecX_P - steady_vecX;
             end
 
-            construct_perabolaMat( matdeltaX, n, 1 );
+            construct_perabolaMat( matdeltaX, n, 3 );
 
             % We can now attempt to construct the linear matrix using the offsets
             matK_rec = matK_rec_useInv( n, matdeltaX );

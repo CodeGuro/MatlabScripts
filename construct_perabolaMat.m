@@ -1,5 +1,8 @@
-function peraMat = construct_perabolaMat( matdeltaX, n, p )
+function peraMat = construct_perabolaMat( matdeltaX, n, i )
     
+    % N_ijk -> gene j and k effects on gene i
+    
+    % Construct the unprocessed matrix
     rowCount = n*(n+1)/2;
     columnCount = n;
     peraMat = nan( rowCount, columnCount );
@@ -14,6 +17,26 @@ function peraMat = construct_perabolaMat( matdeltaX, n, p )
             i_para = i_para + 1;
         end
     end
+    
+    % knock out column i (removes redundant terms), N_iji=0
+    column_selection = setdiff( 1:n, i );
+    
+    % knock out n rows (removes redundant terms), N_iij=0
+    row_selection = 1:(n*(n+1)/2);
+    n_selections = reshape( 1:(n*n), [n n] )';
+    for k=1:n
+        n_selections(k,:) = n_selections(k,:) - (k-1)*k/2;
+        for h=1:k-1
+            n_selections( k, h ) = 0;
+        end
+    end
+    
+    n_selections( i, : ) = 0;
+    n_selections( :, i ) = 0;
+    
+    row_selection = setdiff( reshape( n_selections', [ 1 n*n ] ), 0 );
+    
+    peraMat = peraMat( row_selection, column_selection );
     
 end
 
