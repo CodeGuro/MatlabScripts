@@ -1,4 +1,4 @@
-function peraMat = construct_perabolaMat( matdeltaX, n, i )
+function result = construct_perabolaMat( matdeltaX, n, i )
     
     % N_ijk -> gene j and k effects on gene i
     
@@ -26,9 +26,7 @@ function peraMat = construct_perabolaMat( matdeltaX, n, i )
     n_selections = reshape( 1:(n*n), [n n] )';
     for k=1:n
         n_selections(k,:) = n_selections(k,:) - (k-1)*k/2;
-        for h=1:k-1
-            n_selections( k, h ) = 0;
-        end
+        n_selections( k, 1:(k-1) ) = 0;
     end
     
     n_selections( i, : ) = 0;
@@ -36,7 +34,8 @@ function peraMat = construct_perabolaMat( matdeltaX, n, i )
     
     row_selection = setdiff( reshape( n_selections', [ 1 n*n ] ), 0 );
     
-    peraMat = peraMat( row_selection, column_selection );
+    result = [ matdeltaX( column_selection, column_selection );...
+        peraMat( row_selection, column_selection )];
     
 end
 
