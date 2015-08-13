@@ -1,8 +1,8 @@
 % generate the random n x n matrix
 linear = false;
-use_lasso_Nmat = false;
-n = 3;
-A_limiter = 0.5;
+use_lasso_Nmat = true;
+n = 5;
+A_limiter = 0.8;
 numMatrix_samples = 1;
 
 
@@ -128,8 +128,8 @@ for M_sample = 1:numMatrix_samples
     
 end
 
-vecMistakes_avg = mean( vecMistakes_avg_avg );
-vecstDevs = mean( vecstDevs_avg );
+vecMistakes_avg = mean( vecMistakes_avg_avg, 1 );
+vecstDevs = mean( vecstDevs_avg, 1 );
 vecMistakes_avg_lasso = mean( vecMistakes_avg_lasso_avg, 3 );
 vecstDevs_lasso = mean( vecstDevs_lasso_avg, 3 );
 
