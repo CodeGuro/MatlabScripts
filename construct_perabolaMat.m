@@ -1,4 +1,4 @@
-function result = construct_perabolaMat( matdeltaX, n, i )
+function [ result, nonzero_ind ] = construct_perabolaMat( matdeltaX, n, i )
     
     % N_ijk -> gene j and k effects on gene i
     
@@ -36,6 +36,8 @@ function result = construct_perabolaMat( matdeltaX, n, i )
     
     result = [ matdeltaX( column_selection, column_selection );...
         peraMat( row_selection, column_selection )];
+    
+    nonzero_ind = find( n_selections );
     
 end
 
