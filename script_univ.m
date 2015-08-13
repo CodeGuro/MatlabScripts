@@ -1,8 +1,8 @@
 % generate the random n x n matrix
 linear = false;
-use_lasso_Nmat = true;
+use_lasso_Nmat = false;
 n = 3;
-A_limiter = 0.8;
+A_limiter = 0.5;
 numMatrix_samples = 1;
 
 
@@ -66,7 +66,7 @@ for M_sample = 1:numMatrix_samples
     end
 
     % now that we've found a steady state, we can start the perturbations
-    perturb_amount = 150;
+    perturb_amount = 1;
     perturb_samples = 20;
     matdeltaX = NaN( n, n );
     mistake_threshold = 1E-1;
