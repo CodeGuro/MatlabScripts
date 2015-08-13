@@ -28,7 +28,7 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat )
                 Nmat_gene_pidx( nonzero_indices ) = matN_cur_rows( lambda_idx, : );
                 for i=1:n
                     for j=1:n
-                        if Nmat_gene_pidx( i, j ) ~= 0
+                        if Nmat_gene_pidx( i, j ) * Nmat_gene_pidx( i, j ) > 1E-2
                             matK_recs( p_idx, i, lambda_idx ) = Inf;
                             matK_recs( p_idx, j, lambda_idx ) = Inf;
                         end
