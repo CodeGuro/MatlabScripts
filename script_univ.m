@@ -1,8 +1,9 @@
 % generate the random n x n matrix
 linear = false;
+use_lasso_Nmat = true;
 n = 3;
 A_limiter = 0.8;
-numMatrix_samples = 5;
+numMatrix_samples = 1;
 
 
 for M_sample = 1:numMatrix_samples
@@ -107,7 +108,7 @@ for M_sample = 1:numMatrix_samples
             vecMistakes( sample_num ) = numMistakes;
 
             if length(lambdas) > 0
-                matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas );
+                matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat );
                 for z=1:length(lambdas)
                     numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
                     vecMistakes_lasso( sample_num, z ) = numMistakes_lasso;
