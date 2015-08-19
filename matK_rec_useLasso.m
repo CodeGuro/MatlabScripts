@@ -22,7 +22,7 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat )
             matK_recs( p_idx, :, z ) = insert(matK_cur_rows(z, :), insertion_element, p_idx);
         end
         
-        if false
+        if use_lasso_Nmat
             for lambda_idx = 1:length(lambdas)
                 Nmat_gene_pidx = zeros( n, n );
                 Nmat_gene_pidx( nonzero_indices ) = matN_cur_rows( lambda_idx, : );
