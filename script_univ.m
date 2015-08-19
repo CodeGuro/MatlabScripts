@@ -1,11 +1,19 @@
-% generate the random n x n matrix
+% options
 linear = false;
 use_lasso_Nmat = false;
 n = 5;
 A_limiter = 0.8;
 numMatrix_samples = 6;
+maxIterations = 1000;
+itDiff_threshold = 1E-4;
+perturb_amount = 1;
+perturb_samples = 20;
+mistake_threshold = 1E-1;
+sigmas = 0:0.03:0.5;
+lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
 
 
+% algorithm starts here
 for M_sample = 1:numMatrix_samples
 
     matA = rand(n,n) > A_limiter;
@@ -49,14 +57,6 @@ for M_sample = 1:numMatrix_samples
         end
     end
 
-    %prepare for convergence
-    vecX = zeros( n, 1 );
-    iteration = 1;
-    maxIterations = 1000;
-    itDiff_threshold = 1E-4;
-    finished = false;
-
-
     % find the steady state
     if linear
         steady_vecX = findSteady_lin( n, matK, vecB );
@@ -66,12 +66,7 @@ for M_sample = 1:numMatrix_samples
     end
 
     % now that we've found a steady state, we can start the perturbations
-    perturb_amount = 1;
-    perturb_samples = 20;
     matdeltaX = NaN( n, n );
-    mistake_threshold = 1E-1;
-    sigmas = 0:0.03:0.5;
-    lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
 
     for sigma_it = 1:length(sigmas)
         disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
