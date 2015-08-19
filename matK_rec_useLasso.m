@@ -22,13 +22,12 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat )
             matK_recs( p_idx, :, z ) = insert(matK_cur_rows(z, :), insertion_element, p_idx);
         end
         
-        if use_lasso_Nmat
+        if false
             for lambda_idx = 1:length(lambdas)
                 Nmat_gene_pidx = zeros( n, n );
                 Nmat_gene_pidx( nonzero_indices ) = matN_cur_rows( lambda_idx, : );
                 
-                [ nnz_I, nnz_J ] = find( Nmat_gene_pidx );
-                
+         %       [ nnz_I, nnz_J ] = find( Nmat_gene_pidx );
          %       matK_recs( p_idx, nnz_I, lambda_idx ) = Inf;
          %       matK_recs( p_idx, nnz_J, lambda_idx ) = Inf;
                 
