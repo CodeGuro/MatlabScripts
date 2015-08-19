@@ -37,7 +37,10 @@ function [ result, nonzero_ind ] = construct_perabolaMat( matdeltaX, n, i )
     result = [ matdeltaX( column_selection, column_selection );...
         peraMat( row_selection, column_selection )];
     
-    nonzero_ind = find( n_selections );
+     % since find() and matrix indexing uses dimension 1
+     % we use the transpose for proper order and indexing
+    [ nnz_I, nnz_J ] = find( n_selections' );
+    nonzero_ind = sub2ind( [n n], nnz_J, nnz_I ); 
     
 end
 
