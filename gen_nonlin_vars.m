@@ -1,5 +1,9 @@
-function [ setsJ, powerSetsJ, alphas ] = gen_nonlin_vars( n, matA )
+function [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA )
 
+    matN = matA * 2;
+    matK = zeros( n, n );
+    alpha_null = rand( n, 1 );
+    
     for i = 1 : n
         vecIdx = find( matA( i, : ) );
         pSet = {};

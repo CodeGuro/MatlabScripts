@@ -18,23 +18,18 @@ for M_sample = 1:numMatrix_samples
 
     matA = rand(n,n) > A_limiter;
     matA( logical( eye( n ) ) ) = 0;
-    matK = zeros( n, n );
     b_min = 1E-5;
     b_max = 1;
     vecB = b_min + (b_max - b_min).*rand( [n,1] );
-    matN = matA * 2;
-    setsJ = {};
-    powerSetsJ = {};
-    alphas = {};
-    alpha_null = rand( n, 1 );
+    
     if linear
         func_type = 'linear';
     else
         func_type = 'nonlinear';
     end
 
-    % generate setsJ, powerSetsJ, and matK
-    [ setsJ, powerSetsJ, alphas ] = gen_nonlin_vars( n, matA );
+    % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
+    [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA );
 
     % find the steady state
     if linear
@@ -69,8 +64,6 @@ for M_sample = 1:numMatrix_samples
 
                 matdeltaX( :, p ) = vecX_P - steady_vecX;
             end
-
-            % construct_perabolaMat( matdeltaX, n, 3 );
 
             % We can now attempt to construct the linear matrix using the offsets
             matK_rec = matK_rec_useInv( n, matdeltaX );
