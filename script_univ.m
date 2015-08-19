@@ -40,35 +40,23 @@ for M_sample = 1:numMatrix_samples
     end
 
     % now that we've found a steady state, we can start the perturbations
-    matdeltaX = NaN( n, n );
+
 
     for sigma_it = 1:length(sigmas)
         disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
-        vecMistakes = nan( 1, perturb_samples );
+        vecMistakes_inv = nan( 1, perturb_samples );
         vecMistakes_lasso = nan( perturb_samples, length(lambdas) );
 
         for sample_num = 1:perturb_samples
 
             disp(['iterating... sample ' num2str(sample_num) ' out of ' num2str(perturb_samples)]);
-
-            for p = 1:n % perturbation index
-
-                disp(['perturbation index: ' num2str(p) ' out of ' num2str(n)]);
-
-                if linear
-                    vecX_P = perturb_lin_v2( n, steady_vecX, matK, vecB, p, perturb_amount, sigmas( sigma_it ) );
-                else
-                    vecX_P = perturb_nonlin( n, steady_vecX, matK, matN, setsJ, powerSetsJ, alphas, ...
-                        alpha_null, itDiff_threshold, maxIterations, p, perturb_amount, sigmas( sigma_it ) );
-                end
-
-                matdeltaX( :, p ) = vecX_P - steady_vecX;
-            end
+            
+            matdeltaX = construct_matdeltaX( n, steady_vecX, vecB, matK, matN, setsJ, powerSetsJ, ...
+                alphas, alpha_null, itDiff_threshold, maxIterations, perturb_amount, sigmas, sigma_it, linear );
 
             % We can now attempt to construct the linear matrix using the offsets
             matK_rec = matK_rec_useInv( n, matdeltaX );
-            numMistakes = nnz( logical( matK ) - logical( abs(matK_rec) > mistake_threshold ) );
-            vecMistakes( sample_num ) = numMistakes;
+            vecMistakes_inv( sample_num ) = nnz( logical( matK ) - logical( abs(matK_rec) > mistake_threshold ) );
 
             if length(lambdas) > 0
                 matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat );
@@ -79,22 +67,23 @@ for M_sample = 1:numMatrix_samples
             end
 
         end
-        vecMistakes_avg_avg( M_sample, sigma_it ) = mean( vecMistakes ); % std(dim1) on assgined var for samples across matrices
-        vecstDevs_avg( M_sample, sigma_it ) = std( vecMistakes ); % std(dim1) on assigned var for samples across matrices
+        
+        vecMistakes_inv_msamples( M_sample, sigma_it ) = mean( vecMistakes_inv ); % std(dim1) on assgined var for samples across matrices
+        vecstDevs_inv_msamples( M_sample, sigma_it ) = std( vecMistakes_inv ); % std(dim1) on assigned var for samples across matrices
 
         if length(lambdas) > 0
-            vecMistakes_avg_lasso_avg( :, sigma_it, M_sample ) = mean( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
-            vecstDevs_lasso_avg( :, sigma_it, M_sample ) = std( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
+            vecMistakes_lasso_msamples( :, sigma_it, M_sample ) = mean( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
+            vecstDevs_lasso_msamples( :, sigma_it, M_sample ) = std( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
         end
 
     end
     
 end
 
-vecMistakes_avg = mean( vecMistakes_avg_avg, 1 );
-vecstDevs = mean( vecstDevs_avg, 1 );
-vecMistakes_avg_lasso = mean( vecMistakes_avg_lasso_avg, 3 );
-vecstDevs_lasso = mean( vecstDevs_lasso_avg, 3 );
+vecMistakes_inv_avg = mean( vecMistakes_inv_msamples, 1 );
+vecstDevs_inv_avg = mean( vecstDevs_inv_msamples, 1 );
+vecMistakes_avg_lasso = mean( vecMistakes_lasso_msamples, 3 );
+vecstDevs_lasso = mean( vecstDevs_lasso_msamples, 3 );
 
 % output
 plot_x = (ones(length(lambdas),1)*sigmas)';
@@ -106,8 +95,8 @@ for lambda_it = 1:length(lambdas)
 end
 
 plot_x( :, end+1 ) = sigmas;
-plot_y(:, end+1 ) = vecMistakes_avg;
-plot_devs(:, end+1 ) = vecstDevs;
+plot_y(:, end+1 ) = vecMistakes_inv_avg;
+plot_devs(:, end+1 ) = vecstDevs_inv_avg;
 legends{length(lambdas) + 1} = 'inv';
 
 errorbar( plot_x, plot_y, plot_devs, ':o' );
