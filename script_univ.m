@@ -1,6 +1,6 @@
 % generate the random n x n matrix
 linear = false;
-use_lasso_Nmat = true;
+use_lasso_Nmat = false;
 n = 5;
 A_limiter = 0.8;
 numMatrix_samples = 6;
@@ -72,10 +72,6 @@ for M_sample = 1:numMatrix_samples
     mistake_threshold = 1E-1;
     sigmas = 0:0.03:0.5;
     lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
-    vecMistakes_avg = nan(size(sigmas));
-    vecstDevs = nan(size(sigmas));
-    vecMistakes_avg_lasso = nan( length(lambdas), length(sigmas) );
-    vecstDevs_lasso = nan( length(lambdas), length(sigmas) );
 
     for sigma_it = 1:length(sigmas)
         disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
