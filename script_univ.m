@@ -79,12 +79,12 @@ for M_sample = 1:numMatrix_samples
             end
 
         end
-        vecMistakes_avg_avg( M_sample, sigma_it ) = mean( vecMistakes ); % std(dim1) for samples across matrices
-        vecstDevs_avg( M_sample, sigma_it ) = std( vecMistakes ); % std(dim1) for samples across matrices
+        vecMistakes_avg_avg( M_sample, sigma_it ) = mean( vecMistakes ); % std(dim1) on assgined var for samples across matrices
+        vecstDevs_avg( M_sample, sigma_it ) = std( vecMistakes ); % std(dim1) on assigned var for samples across matrices
 
         if length(lambdas) > 0
-            vecMistakes_avg_lasso_avg( :, sigma_it, M_sample ) = mean( vecMistakes_lasso ); % std(dim3) for samples across matrices
-            vecstDevs_lasso_avg( :, sigma_it, M_sample ) = std( vecMistakes_lasso ); % std(dim3) for samples across matrices
+            vecMistakes_avg_lasso_avg( :, sigma_it, M_sample ) = mean( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
+            vecstDevs_lasso_avg( :, sigma_it, M_sample ) = std( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
         end
 
     end
