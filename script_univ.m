@@ -97,20 +97,20 @@ vecMistakes_avg_lasso = mean( vecMistakes_avg_lasso_avg, 3 );
 vecstDevs_lasso = mean( vecstDevs_lasso_avg, 3 );
 
 % output
-plot_sigmas = (ones(length(lambdas),1)*sigmas)';
-plot_mistakes = vecMistakes_avg_lasso';
+plot_x = (ones(length(lambdas),1)*sigmas)';
+plot_y = vecMistakes_avg_lasso';
 plot_devs = vecstDevs_lasso';
 legends = cell( 1, length(lambdas) );
 for lambda_it = 1:length(lambdas)
     legends{ lambda_it } = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
 end
 
-plot_sigmas( :, end+1 ) = sigmas;
-plot_mistakes(:, end+1 ) = vecMistakes_avg;
+plot_x( :, end+1 ) = sigmas;
+plot_y(:, end+1 ) = vecMistakes_avg;
 plot_devs(:, end+1 ) = vecstDevs;
 legends{length(lambdas) + 1} = 'inv';
 
-errorbar( plot_sigmas, plot_mistakes, plot_devs, ':o' );
+errorbar( plot_x, plot_y, plot_devs, ':o' );
 legend( 'avg mistakes' );
 xlabel('sigma');
 ylabel('recovery mistakes');
