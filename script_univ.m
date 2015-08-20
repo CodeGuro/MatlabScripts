@@ -9,7 +9,7 @@ itDiff_threshold = 1E-4;
 perturb_amount = 1;
 num_samples = 5;
 mistake_threshold = 1E-1;
-sigmas = [ 0.04 ];
+sigmas = [ 0.11 ];
 lambdas = [2E-4 0.02 0.06 0.1 0.2 2E10 ];
 if linear
     func_type = 'linear';
