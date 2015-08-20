@@ -7,10 +7,10 @@ numMatrix_samples = 12;
 maxIterations = 1000;
 itDiff_threshold = 1E-4;
 perturb_amount = 1;
-num_samples = 20;
+num_samples = 5;
 mistake_threshold = 1E-1;
-sigmas = [ 0.01 ];
-lambdas = [2E-4 0.02 0.06 0.1 1 2E10 ];
+sigmas = [ 0.04 ];
+lambdas = [2E-4 0.02 0.06 0.1 0.2 2E10 ];
 if linear
     func_type = 'linear';
 else
@@ -43,12 +43,12 @@ end
 
 errorbar( plot_x, plot_y, plot_devs, ':o' );
 legend( 'avg mistakes' );
-xlabel('n_size');
+xlabel('n size');
 ylabel('recovery mistakes');
 legend( legends );
 title( {[num2str(n) 'X' num2str(n) ' matrix of a ' func_type ' regulatory network, with '...
     num2str(num_samples) ' samples per perturbation'],...
-    ['perturb amount=' num2str(perturb_amount) ', '...
+    ['perturb amount=' num2str(perturb_amount) ', sigma=' num2str(sigmas) ', '  ...
     'A limiter=' num2str(A_limiter) ', and ' num2str(numMatrix_samples) ' matrices sampled']} );
 %axis( [ sigmas(1) sigmas(end) 0 10] );
 axis('auto');
