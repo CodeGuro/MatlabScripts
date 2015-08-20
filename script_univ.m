@@ -14,22 +14,26 @@ lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
 
 
 % algorithm starts here
+vecMistakes_avg_nsamples = nan( length(sigmas), 1 + length(lambdas), numMatrix_samples );
+vecMistakes_dev_nsamples = nan( length(sigmas), 1 + length(lambdas), numMatrix_samples );
+
 for M_sample = 1:numMatrix_samples
+    
+    disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
 
     matA = rand(n,n) > A_limiter;
     matA( logical( eye( n ) ) ) = 0;
     b_min = 1E-5;
     b_max = 1;
     vecB = b_min + (b_max - b_min).*rand( [n,1] );
+    % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
+    [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA );
     
     if linear
         func_type = 'linear';
     else
         func_type = 'nonlinear';
     end
-
-    % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
-    [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA );
 
     % find the steady state
     if linear
@@ -38,23 +42,14 @@ for M_sample = 1:numMatrix_samples
         steady_vecX = findSteady_nonlin( n, matK, matN, setsJ, powerSetsJ, alphas, ...
             alpha_null, itDiff_threshold, maxIterations );
     end
-
-    % now that we've found a steady state, we can start the perturbations
     
-    for sigma_it = 1:length(sigmas)
-        disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
-        
-        sigma = sigmas( sigma_it );
-        
-        [ vecMistakes_avg, vecMistakes_dev ] ...
-            = sample_numMistakes( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, alphas, ...
-            alpha_null, itDiff_threshold, mistake_threshold, maxIterations, perturb_amount, num_samples, ...
-            lambdas, sigma, linear, use_lasso_Nmat );
-        
-        vecMistakes_avg_nsamples( sigma_it, :, M_sample ) = vecMistakes_avg;
-        vecMistakes_dev_nsamples( sigma_it, :, M_sample ) = vecMistakes_dev;
-        
-    end
+    [ vecMistakes_avg_allsigmas, vecMistakes_dev_allsigmas ] = sample_numMistakes_mat( n,...
+        steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, alphas, ...
+        alpha_null, itDiff_threshold, mistake_threshold, maxIterations, ...
+        perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat );
+    
+    vecMistakes_avg_nsamples( :, :, M_sample ) = vecMistakes_avg_allsigmas;
+    vecMistakes_dev_nsamples( :, :, M_sample ) = vecMistakes_dev_allsigmas;
     
 end
 
