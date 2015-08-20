@@ -1,6 +1,6 @@
 % options
 linear = false;
-use_lasso_Nmat = false;
+use_lasso_Nmat = true;
 n = 5;
 A_limiter = 0.8;
 numMatrix_samples = 6;
