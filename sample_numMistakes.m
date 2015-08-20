@@ -26,14 +26,6 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes( n, steady_v
 
     end
     
-    % vecMistakes_inv is size: 1 x num_samples, vector of samples for a sigma
-    vecMistakes_inv_avg = mean( vecMistakes_inv );
-    vecMistakes_inv_dev = std( vecMistakes_inv );
-    
-    % vecMistakes_lasso is size: num_samples x length(lambdas), for a given sigma
-    vecMistakes_lasso_avg = mean( vecMistakes_lasso, 1 );
-    vecMistakes_lasso_dev = std( vecMistakes_lasso, 1 );
-    
     vecMistakes_avg = [ mean( vecMistakes_inv ) mean( vecMistakes_lasso, 1 ) ];
     vecMistakes_dev = [ std( vecMistakes_inv ) std( vecMistakes_lasso, 1 ) ];
 
