@@ -7,7 +7,7 @@ numMatrix_samples = 6;
 maxIterations = 1000;
 itDiff_threshold = 1E-4;
 perturb_amount = 1;
-perturb_samples = 20;
+num_samples = 20;
 mistake_threshold = 1E-1;
 sigmas = 0:0.03:0.5;
 lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
@@ -40,48 +40,31 @@ for M_sample = 1:numMatrix_samples
     end
 
     % now that we've found a steady state, we can start the perturbations
-
-
+    
     for sigma_it = 1:length(sigmas)
         disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
-        vecMistakes_inv = nan( 1, perturb_samples );
-        vecMistakes_lasso = nan( perturb_samples, length(lambdas) );
-
-        for sample_num = 1:perturb_samples
-
-            disp(['iterating... sample ' num2str(sample_num) ' out of ' num2str(perturb_samples)]);
-            
-            matdeltaX = construct_matdeltaX( n, steady_vecX, vecB, matK, matN, setsJ, powerSetsJ, ...
-                alphas, alpha_null, itDiff_threshold, maxIterations, perturb_amount, sigmas, sigma_it, linear );
-
-            % We can now attempt to construct the linear matrix using the offsets
-            matK_rec = matK_rec_useInv( n, matdeltaX );
-            vecMistakes_inv( sample_num ) = nnz( logical( matK ) - logical( abs(matK_rec) > mistake_threshold ) );
-
-            if length(lambdas) > 0
-                matK_recs_lasso = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat );
-                for z=1:length(lambdas)
-                    numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
-                    vecMistakes_lasso( sample_num, z ) = numMistakes_lasso;
-                end
-            end
-
-        end
         
-        vecMistakes_inv_msamples( M_sample, sigma_it ) = mean( vecMistakes_inv ); % std(dim1) on assgined var for samples across matrices
-        vecstDevs_inv_msamples( M_sample, sigma_it ) = std( vecMistakes_inv ); % std(dim1) on assigned var for samples across matrices
+        sigma = sigmas( sigma_it );
+        
+        [ vecMistakes_inv_avg, vecMistakes_inv_dev, vecMistakes_lasso_avg, vecMistakes_lasso_dev ] ...
+            = sample_numMistakes( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, alphas, ...
+            alpha_null, itDiff_threshold, mistake_threshold, maxIterations, perturb_amount, num_samples, ...
+            lambdas, sigma, linear, use_lasso_Nmat );
+        
+        vecMistakes_inv_msamples( M_sample, sigma_it ) = vecMistakes_inv_avg; % std(dim1) on assgined var for samples across matrices
+        vecstDevs_inv_msamples( M_sample, sigma_it ) = vecMistakes_inv_dev; % std(dim1) on assigned var for samples across matrices
 
         if length(lambdas) > 0
-            vecMistakes_lasso_msamples( :, sigma_it, M_sample ) = mean( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
-            vecstDevs_lasso_msamples( :, sigma_it, M_sample ) = std( vecMistakes_lasso, 1 ); % std(dim3) on assigned var for samples across matrices
+            vecMistakes_lasso_msamples( :, sigma_it, M_sample ) = vecMistakes_lasso_avg; % std(dim3) on assigned var for samples across matrices
+            vecstDevs_lasso_msamples( :, sigma_it, M_sample ) = vecMistakes_lasso_dev; % std(dim3) on assigned var for samples across matrices
         end
 
     end
     
 end
 
-vecMistakes_inv_avg = mean( vecMistakes_inv_msamples, 1 );
-vecstDevs_inv_avg = mean( vecstDevs_inv_msamples, 1 );
+vecMistakes_inv_msamples_avg = mean( vecMistakes_inv_msamples, 1 );
+vecstDevs_inv_msamples_avg = mean( vecstDevs_inv_msamples, 1 );
 vecMistakes_avg_lasso = mean( vecMistakes_lasso_msamples, 3 );
 vecstDevs_lasso = mean( vecstDevs_lasso_msamples, 3 );
 
@@ -95,8 +78,8 @@ for lambda_it = 1:length(lambdas)
 end
 
 plot_x( :, end+1 ) = sigmas;
-plot_y(:, end+1 ) = vecMistakes_inv_avg;
-plot_devs(:, end+1 ) = vecstDevs_inv_avg;
+plot_y(:, end+1 ) = vecMistakes_inv_msamples_avg;
+plot_devs(:, end+1 ) = vecstDevs_inv_msamples_avg;
 legends{length(lambdas) + 1} = 'inv';
 
 errorbar( plot_x, plot_y, plot_devs, ':o' );

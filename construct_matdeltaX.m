@@ -1,5 +1,5 @@
 function [ matdeltaX ] = construct_matdeltaX( n, steady_vecX, vecB, matK, matN, setsJ, powerSetsJ, ...
-    alphas, alpha_null, itDiff_threshold, maxIterations, perturb_amount, sigmas, sigma_it, linear )
+    alphas, alpha_null, itDiff_threshold, maxIterations, perturb_amount, sigma, linear )
 
     matdeltaX = NaN( n, n );
     for p = 1:n % perturbation index
@@ -7,10 +7,10 @@ function [ matdeltaX ] = construct_matdeltaX( n, steady_vecX, vecB, matK, matN, 
         disp(['perturbation index: ' num2str(p) ' out of ' num2str(n)]);
 
         if linear
-            vecX_P = perturb_lin_v2( n, steady_vecX, matK, vecB, p, perturb_amount, sigmas( sigma_it ) );
+            vecX_P = perturb_lin_v2( n, steady_vecX, matK, vecB, p, perturb_amount, sigma );
         else
             vecX_P = perturb_nonlin( n, steady_vecX, matK, matN, setsJ, powerSetsJ, alphas, ...
-                alpha_null, itDiff_threshold, maxIterations, p, perturb_amount, sigmas( sigma_it ) );
+                alpha_null, itDiff_threshold, maxIterations, p, perturb_amount, sigma );
         end
 
         matdeltaX( :, p ) = vecX_P - steady_vecX;
