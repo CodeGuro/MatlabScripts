@@ -21,6 +21,7 @@ function [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars
     end
 
     % generate alphas
+    alphas = cell( size( powerSetsJ ) );
     for i = 1 : size( powerSetsJ, 2 )
         for j = 1 : size( powerSetsJ{ i }, 2 )
             alphas{ i }{ j } = rand();
