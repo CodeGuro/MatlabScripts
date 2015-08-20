@@ -10,7 +10,7 @@ perturb_amount = 1;
 num_samples = 20;
 mistake_threshold = 1E-1;
 sigmas = 0:0.03:0.5;
-lambdas = [2E-4 2E-2 0.1 0.2 1 2E10 ];
+lambdas = [2E-4 0.02 0.06 0.1 1 2E10 ];
 if linear
     func_type = 'linear';
 else
