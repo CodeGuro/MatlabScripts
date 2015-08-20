@@ -1,4 +1,4 @@
-function [ vecMistakes_inv_avg, vecMistakes_inv_dev, vecMistakes_lasso_avg, vecMistakes_lasso_dev ] = sample_numMistakes( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, ...
+function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, ...
                 alphas, alpha_null, itDiff_threshold, mistake_threshold, maxIterations, perturb_amount, num_samples, ...
                 lambdas, sigma, linear, use_lasso_Nmat )
 
@@ -34,6 +34,8 @@ function [ vecMistakes_inv_avg, vecMistakes_inv_dev, vecMistakes_lasso_avg, vecM
     vecMistakes_lasso_avg = mean( vecMistakes_lasso, 1 );
     vecMistakes_lasso_dev = std( vecMistakes_lasso, 1 );
     
+    vecMistakes_avg = [ mean( vecMistakes_inv ) mean( vecMistakes_lasso, 1 ) ];
+    vecMistakes_dev = [ std( vecMistakes_inv ) std( vecMistakes_lasso, 1 ) ];
 
 end
 

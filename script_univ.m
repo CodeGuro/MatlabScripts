@@ -46,41 +46,28 @@ for M_sample = 1:numMatrix_samples
         
         sigma = sigmas( sigma_it );
         
-        [ vecMistakes_inv_avg, vecMistakes_inv_dev, vecMistakes_lasso_avg, vecMistakes_lasso_dev ] ...
+        [ vecMistakes_avg, vecMistakes_dev ] ...
             = sample_numMistakes( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, alphas, ...
             alpha_null, itDiff_threshold, mistake_threshold, maxIterations, perturb_amount, num_samples, ...
             lambdas, sigma, linear, use_lasso_Nmat );
         
-        vecMistakes_inv_msamples( M_sample, sigma_it ) = vecMistakes_inv_avg; % std(dim1) on assgined var for samples across matrices
-        vecstDevs_inv_msamples( M_sample, sigma_it ) = vecMistakes_inv_dev; % std(dim1) on assigned var for samples across matrices
-
-        if length(lambdas) > 0
-            vecMistakes_lasso_msamples( sigma_it, :, M_sample ) = vecMistakes_lasso_avg; % std(dim3) on assigned var for samples across matrices
-            vecstDevs_lasso_msamples( sigma_it, :, M_sample ) = vecMistakes_lasso_dev; % std(dim3) on assigned var for samples across matrices
-        end
-
+        vecMistakes_avg_nsamples( sigma_it, :, M_sample ) = vecMistakes_avg;
+        vecMistakes_dev_nsamples( sigma_it, :, M_sample ) = vecMistakes_dev;
+        
     end
     
 end
 
-vecMistakes_inv_msamples_avg = mean( vecMistakes_inv_msamples, 1 );
-vecstDevs_inv_msamples_avg = mean( vecstDevs_inv_msamples, 1 );
-vecMistakes_avg_lasso = mean( vecMistakes_lasso_msamples, 3 );
-vecstDevs_lasso = mean( vecstDevs_lasso_msamples, 3 );
-
 % output
-plot_x = (ones(length(lambdas),1)*sigmas)';
-plot_y = vecMistakes_avg_lasso;
-plot_devs = vecstDevs_lasso;
-legends = cell( 1, length(lambdas) );
-for lambda_it = 1:length(lambdas)
-    legends{ lambda_it } = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
-end
+plot_x = (ones( 1 + length(lambdas), 1 ) * sigmas)';
+plot_y = mean( vecMistakes_avg_nsamples, 3 );
+plot_devs = mean( vecMistakes_dev_nsamples, 3 );
+legends = cell( 1, 1 + length(lambdas) );
 
-plot_x( :, end+1 ) = sigmas;
-plot_y(:, end+1 ) = vecMistakes_inv_msamples_avg;
-plot_devs(:, end+1 ) = vecstDevs_inv_msamples_avg;
-legends{length(lambdas) + 1} = 'inv';
+legends{1} = 'inv';
+for lambda_it = 1:length(lambdas)
+    legends{ 1 + lambda_it } = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
+end
 
 errorbar( plot_x, plot_y, plot_devs, ':o' );
 legend( 'avg mistakes' );
