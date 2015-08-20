@@ -55,8 +55,8 @@ for M_sample = 1:numMatrix_samples
         vecstDevs_inv_msamples( M_sample, sigma_it ) = vecMistakes_inv_dev; % std(dim1) on assigned var for samples across matrices
 
         if length(lambdas) > 0
-            vecMistakes_lasso_msamples( :, sigma_it, M_sample ) = vecMistakes_lasso_avg; % std(dim3) on assigned var for samples across matrices
-            vecstDevs_lasso_msamples( :, sigma_it, M_sample ) = vecMistakes_lasso_dev; % std(dim3) on assigned var for samples across matrices
+            vecMistakes_lasso_msamples( sigma_it, :, M_sample ) = vecMistakes_lasso_avg; % std(dim3) on assigned var for samples across matrices
+            vecstDevs_lasso_msamples( sigma_it, :, M_sample ) = vecMistakes_lasso_dev; % std(dim3) on assigned var for samples across matrices
         end
 
     end
@@ -70,8 +70,8 @@ vecstDevs_lasso = mean( vecstDevs_lasso_msamples, 3 );
 
 % output
 plot_x = (ones(length(lambdas),1)*sigmas)';
-plot_y = vecMistakes_avg_lasso';
-plot_devs = vecstDevs_lasso';
+plot_y = vecMistakes_avg_lasso;
+plot_devs = vecstDevs_lasso;
 legends = cell( 1, length(lambdas) );
 for lambda_it = 1:length(lambdas)
     legends{ lambda_it } = ['lasso: lambda=' num2str( lambdas(lambda_it) ) ];
