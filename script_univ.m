@@ -1,16 +1,16 @@
 % options
-linear = false;
-use_lasso_Nmat = false;
+linear = false; % flag to determine whether script uses linear or nonlinear network
+use_lasso_Nmat = false; % flag to determine whether the quadratic method is used at lasso
 nsizes = 3:10;
-A_limiter = 0.8;
-numMatrix_samples = 12;
-maxIterations = 1000;
-itDiff_threshold = 1E-4;
-perturb_amount = 1;
-num_samples = 5;
-mistake_threshold = 1E-1;
-sigmas = [ 0.03 ];
-lambdas = [2E-4 0.02 0.06 0.1 0.2 2E10 ];
+A_limiter = 0.8; % limits the generation of nonzeros for matA ([0,1] inclusive)
+numMatrix_samples = 12; % number of unique matrices sampled (new matA generated each time)
+maxIterations = 1000; % used for nonlinear networks for finding steady states, warning is given in output if this is exceeded
+itDiff_threshold = 1E-4; % used for nonlinear networks for finding steady states. (threshold for differences between previous iteration and current one)
+perturb_amount = 1; % perturbation amount (applies to both linear & nonlinear)
+num_samples = 5; % number of samples taken per sigma (values of noise may differ when sigma > 0) (linear & nonlinear)
+mistake_threshold = 1E-1; % values below this in the matrix recovered from matdeltaX are assumed to be 0 (linear & nonlinear)
+sigmas = [ 0.03 ]; % do not make this more than a 1x1 vector!
+lambdas = [2E-4 0.02 0.06 0.1 0.2 2E10 ]; % associated with lasso. Change these freely. Use empty vector if you don't want lasso plotted
 if linear
     func_type = 'linear';
 else
