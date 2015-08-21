@@ -1,16 +1,16 @@
 % options
 linear = false;
-use_lasso_Nmat = true;
-n = 5;
-A_limiter = 0.8;
-numMatrix_samples = 6;
+use_lasso_Nmat = false;
+n = 10;
+A_limiter = 0.9;
+numMatrix_samples = 30;
 maxIterations = 1000;
 itDiff_threshold = 1E-4;
-perturb_amount = 1;
-num_samples = 20;
+perturb_amount = 0.1;
+num_samples = 1;
 mistake_threshold = 1E-1;
-sigmas = 0:0.03:0.5;
-lambdas = [2E-4 0.02 0.06 0.1 1 2E10 ];
+sigmas = 0:0.025:0.1;
+lambdas = 10.^(-6:1:2);
 if linear
     func_type = 'linear';
 else
@@ -18,16 +18,16 @@ else
 end
 
 % algorithm starts here
-[ numMisakes_avg_Msamples, numMisakes_devs_Msamples ] = sample_numMistakes_nmatrices( n, ...
+[ numMistakes_avg_Msamples, numMistakes_devs_Msamples ] = sample_numMistakes_nmatrices( n, ...
     itDiff_threshold, mistake_threshold, maxIterations, numMatrix_samples, ...
     perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
-    A_limiter );
+    A_limiter )
 
 % output
 
 plot_x = (ones( 1 + length(lambdas), 1 ) * sigmas)';
-plot_y = numMisakes_avg_Msamples;
-plot_devs = numMisakes_devs_Msamples;
+plot_y = numMistakes_avg_Msamples;
+plot_devs = numMistakes_devs_Msamples;
 legends = cell( 1, 1 + length(lambdas) );
 
 legends{1} = 'inv';

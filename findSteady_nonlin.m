@@ -4,7 +4,6 @@ function steady_vecX = findSteady_nonlin( n, matK, matN, setsJ, powerSetsJ, alph
     finished = false;
     iteration = 1;
     while ~finished
-
         next_vecX = nonlinear_func( n, vecX, matK, matN, setsJ, powerSetsJ, alphas, alpha_null );
 
         if size( find( abs( vecX - next_vecX ) > itDiff_threshold ), 1 ) == 0 || iteration >= maxIterations
