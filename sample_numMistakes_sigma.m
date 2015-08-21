@@ -27,7 +27,7 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, st
     end
     
     vecMistakes_avg = [ mean( vecMistakes_inv ) mean( vecMistakes_lasso, 1 ) ];
-    vecMistakes_dev = [ std( vecMistakes_inv ) std( vecMistakes_lasso, 1 ) ];
+    vecMistakes_dev = [ std( vecMistakes_inv ) std( vecMistakes_lasso, 0, 1 ) ];
 
 end
 

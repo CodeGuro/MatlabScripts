@@ -1,4 +1,4 @@
-function [ numMisakes_avg_Msamples, numMisakes_devs_Msamples ] = sample_numMistakes_nmatrices( n, ...
+function [ numMistakes_avg_Msamples, numMistakes_devs_Msamples ] = sample_numMistakes_nmatrices( n, ...
             itDiff_threshold, mistake_threshold, maxIterations, numMatrix_samples, ...
             perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
             A_limiter )
@@ -37,8 +37,8 @@ function [ numMisakes_avg_Msamples, numMisakes_devs_Msamples ] = sample_numMista
     
     % dimension 1: sigmas
     % dimension 2: [ inv, lambdas ]
-    numMisakes_avg_Msamples = mean( vecMistakes_avg_nsamples, 3 );
-    numMisakes_devs_Msamples = mean( vecMistakes_dev_nsamples, 3 );
+    numMistakes_avg_Msamples = mean( vecMistakes_avg_nsamples, 3 );
+    numMistakes_devs_Msamples = mean( vecMistakes_dev_nsamples, 3 );
 
 end
 
