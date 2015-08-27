@@ -1,8 +1,10 @@
-function matK_recs = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat )
+function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_lasso_Nmat )
     matK_recs = nan( n, n, size(lambdas, 2) );
     
     for p_idx = 1 : n
         selection = setdiff( 1:n, p_idx );
+        selection_rows = setdiff( 1:n, p_idx );
+        selection_cols = setdiff( 1:n*num_samples, p_idx + (0:(num_samples-1))*n );
         
         if use_lasso_Nmat
             [ lasso_mat, nonzero_indices ] = construct_perabolaMat( matdeltaX, n, p_idx );
@@ -10,7 +12,7 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, lambdas, use_lasso_Nmat )
             matK_cur_rows = rowrecov( 1:length(lambdas), 1:(n-1) );
             matN_cur_rows = rowrecov( 1:length(lambdas), n:end );
         else
-            matK_cur_rows = row_recov_UseLasso( matdeltaX( p_idx, selection ), matdeltaX( selection, selection ), lambdas );
+            matK_cur_rows = row_recov_UseLasso( matdeltaX( p_idx, selection_cols ), matdeltaX( selection_rows, selection_cols ), lambdas );
         end
         
 %         if( nnz(matN_cur_rows) > 0 )
