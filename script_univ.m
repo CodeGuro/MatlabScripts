@@ -1,7 +1,7 @@
 % options
 linear = false; % flag to determine whether script uses linear or nonlinear network
 nsizes = 3:10;
-use_lasso_Nmat = true; % flag to determine whether the quadratic method is used at lasso
+use_lasso_Nmat = false; % flag to determine whether the quadratic method is used at lasso
 A_limiter = 0.8; % limits the generation of nonzeros for matA ([0,1] inclusive)
 numMatrix_samples = 12; % number of unique matrices sampled (new matA generated each time)
 maxIterations = 1000; % used for nonlinear networks for finding steady states, warning is given in output if this is exceeded
