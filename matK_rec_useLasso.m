@@ -35,18 +35,18 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_
                 Nmat_gene_pidx = zeros( n, n );
                 Nmat_gene_pidx( nonzero_indices ) = matN_cur_rows( lambda_idx, : );
                 
-         %       [ nnz_I, nnz_J ] = find( Nmat_gene_pidx );
-         %       matK_recs( p_idx, nnz_I, lambda_idx ) = Inf;
-         %       matK_recs( p_idx, nnz_J, lambda_idx ) = Inf;
+                [ nnz_I, nnz_J ] = find( Nmat_gene_pidx );
+                matK_recs( p_idx, nnz_I, lambda_idx ) = Inf;
+                matK_recs( p_idx, nnz_J, lambda_idx ) = Inf;
                 
-                for i=1:n
-                    for j=1:n
-                        if Nmat_gene_pidx( i, j ) * Nmat_gene_pidx( i, j ) > 1E-2
-                            matK_recs( p_idx, i, lambda_idx ) = Inf;
-                            matK_recs( p_idx, j, lambda_idx ) = Inf;
-                        end
-                    end
-                end
+%                 for i=1:n
+%                     for j=1:n
+%                         if Nmat_gene_pidx( i, j ) * Nmat_gene_pidx( i, j ) > 1E-2
+%                             matK_recs( p_idx, i, lambda_idx ) = Inf;
+%                             matK_recs( p_idx, j, lambda_idx ) = Inf;
+%                         end
+%                     end
+%                 end
             end
         end
         
