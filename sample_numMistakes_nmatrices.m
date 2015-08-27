@@ -37,8 +37,9 @@ function [ numMistakes_avg_Msamples, numMistakes_devs_Msamples ] = sample_numMis
     
     % dimension 1: sigmas
     % dimension 2: [ inv, lambdas ]
+    % dimension 3: matrix sample
     numMistakes_avg_Msamples = mean( vecMistakes_avg_nsamples, 3 );
-    numMistakes_devs_Msamples = mean( vecMistakes_dev_nsamples, 3 );
+    numMistakes_devs_Msamples = std( vecMistakes_avg_nsamples, 0, 3 );
 
 end
 
