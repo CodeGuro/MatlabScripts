@@ -6,9 +6,17 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_
         selection_rows = setdiff( 1:n, p_idx );
         selection_cols = setdiff( 1:n*num_samples, p_idx + (0:(num_samples-1))*n );
         
+        lasso_mat = nan( n*(n+1)/2 - 1, (n-1)*num_samples );
         if use_lasso_Nmat
-            [ lasso_mat, nonzero_indices ] = construct_perabolaMat( matdeltaX, n, p_idx );
-            rowrecov = row_recov_UseLasso( matdeltaX( p_idx, selection ), lasso_mat, lambdas );
+            for num_sample = 1:num_samples
+                lasso_mat( :, ((num_sample-1)*(n-1)+1):num_sample*(n-1) )...
+                    = construct_perabolaMat( matdeltaX( :, ((num_sample-1)*n+1):num_sample*n ), n, p_idx );
+            end
+        end
+        
+        if use_lasso_Nmat
+            [ placeholder, nonzero_indices ] = construct_perabolaMat( matdeltaX, n, p_idx );
+            rowrecov = row_recov_UseLasso( matdeltaX( p_idx, selection_cols ), lasso_mat, lambdas );
             matK_cur_rows = rowrecov( 1:length(lambdas), 1:(n-1) );
             matN_cur_rows = rowrecov( 1:length(lambdas), n:end );
         else
