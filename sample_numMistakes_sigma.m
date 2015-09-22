@@ -14,7 +14,7 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, st
     
     matK_rec = matK_rec_useInv( n, noisy_matdeltaX_tiled, num_samples );
     vecMistakes_inv( 1 ) = nnz( matA - logical( abs(matK_rec) > mistake_threshold ) );
-    disp( ['mistake count: ' num2str(vecMistakes_inv(1)) ] );
+    % disp( ['mistake count: ' num2str(vecMistakes_inv(1)) ] );
     
     if length(lambdas) > 0
         matK_recs_lasso = matK_rec_useLasso( n, noisy_matdeltaX_tiled, num_samples, lambdas, use_lasso_Nmat );

@@ -6,10 +6,10 @@ A_limiter = 0.8; % limits the generation of nonzeros for matA ([0,1] inclusive)
 numMatrix_samples = 8; % number of unique matrices sampled (new matA generated each time)
 maxIterations = 1000; % used for nonlinear networks for finding steady states, warning is given in output if this is exceeded
 itDiff_threshold = 1E-15; % used for nonlinear networks for finding steady states. (threshold for differences between previous iteration and current one)
-perturb_amount = 0.01; % perturbation amount (applies to both linear & nonlinear)
-num_samples = 10000; % number of matdeltaX repititions foreach noise sampling taken per sigma (values of noise may differ when sigma > 0) (linear & nonlinear)
-mistake_threshold = 1E-3; % values below this in the matrix recovered from matdeltaX are assumed to be 0 (linear & nonlinear)
-sigmas = [ 0 0 1E-9 1E-8 1E-7 1E-6 1E-5 1E-4 1E-3 1E-2 ]; % sigmas associated with the level of noise. Plotted in x-dimension
+perturb_amount = 0.1; % perturbation amount (applies to both linear & nonlinear)
+num_samples = 20; % number of matdeltaX repititions foreach noise sampling taken per sigma (values of noise may differ when sigma > 0) (linear & nonlinear)
+mistake_threshold = 1E-2; % values below this in the matrix recovered from matdeltaX are assumed to be 0 (linear & nonlinear)
+sigmas = [ 0 0.1 0.2 0.5 ]; % sigmas associated with the level of noise. Plotted in x-dimension
 lambdas = [0 2E-4 2E-3 1E-2 2E-1 1 ]; % associated with lasso. Change these freely. Use empty vector if you don't want lasso plotted
 if linear
     func_type = 'linear';
