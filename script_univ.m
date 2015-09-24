@@ -1,4 +1,4 @@
-function script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
+function numMistakes = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
     perturbAmount_real, numSamples_int, mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool )
 
     % options
@@ -50,5 +50,7 @@ function script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numM
         %axis( [ sigmas(1) sigmas(end) 0 10] );
         axis('auto');
     end
+    
+    numMistakes = numMisakes_avg_Msamples;
 
 end
