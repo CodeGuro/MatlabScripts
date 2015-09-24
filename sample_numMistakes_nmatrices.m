@@ -3,8 +3,8 @@ function [ numMistakes_avg_Msamples, numMistakes_devs_Msamples ] = sample_numMis
             perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
             A_limiter )
 
-    vecMistakes_avg_nsamples = nan( length(sigmas), 1 + length(lambdas), numMatrix_samples );
-    vecMistakes_dev_nsamples = nan( length(sigmas), 1 + length(lambdas), numMatrix_samples );
+    vecMistakes_avg_nsamples = nan( length(sigmas), length(mistake_threshold), numMatrix_samples );
+    vecMistakes_dev_nsamples = nan( length(sigmas), length(mistake_threshold), numMatrix_samples );
     for M_sample = 1:numMatrix_samples
 
         disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
@@ -36,7 +36,7 @@ function [ numMistakes_avg_Msamples, numMistakes_devs_Msamples ] = sample_numMis
     end
     
     % dimension 1: sigmas
-    % dimension 2: [ inv, lambdas ]
+    % dimension 2: mistake_threshold
     % dimension 3: matrix sample
     numMistakes_avg_Msamples = mean( vecMistakes_avg_nsamples, 3 );
     numMistakes_devs_Msamples = std( vecMistakes_avg_nsamples, 0, 3 );

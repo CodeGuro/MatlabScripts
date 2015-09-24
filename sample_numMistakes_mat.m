@@ -3,8 +3,8 @@ function [ vecMistakes_avg_nsamples, vecMistakes_dev_nsamples ] = sample_numMist
     alpha_null, itDiff_threshold, mistake_threshold, maxIterations, ...
     perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat )
 
-    vecMistakes_avg_nsamples = nan( length(sigmas), 1 + length(lambdas) );
-    vecMistakes_dev_nsamples = nan( length(sigmas), 1 + length(lambdas) );
+    vecMistakes_avg_nsamples = nan( length(sigmas), length(mistake_threshold) );
+    vecMistakes_dev_nsamples = nan( length(sigmas), length(mistake_threshold) );
 
     for sigma_it = 1:length(sigmas)
         disp(['sampling sigma: ' num2str(sigma_it) ' out of ' num2str(length(sigmas))]);
