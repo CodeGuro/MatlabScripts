@@ -1,4 +1,4 @@
-function numMistakes = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
+function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
     perturbAmount_real, numSamples_int, mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool )
 
     % options
@@ -52,7 +52,5 @@ function numMistakes = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimi
         axis('auto');
         %}
     end
-    
-    numMistakes = numMisakes_avg_Msamples;
 
 end
