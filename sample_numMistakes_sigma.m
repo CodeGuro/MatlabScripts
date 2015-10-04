@@ -1,10 +1,9 @@
-function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, ...
+function [ vecMistakes_inv, vecMistakes_lasso  ] = sample_numMistakes_sigma( n, steady_vecX, matA, vecB, matK, matN, setsJ, powerSetsJ, ...
                 alphas, alpha_null, itDiff_threshold, mistake_threshold, maxIterations, perturb_amount, num_samples, ...
                 lambdas, sigma, linear, use_lasso_Nmat )
 
-    trials = 1; % num_samples (previously)
-    vecMistakes_inv = nan( 1, trials );
-    vecMistakes_lasso = nan( trials, length(lambdas) );
+    vecMistakes_inv = nan( 1, length(mistake_threshold) );
+    vecMistakes_lasso = nan( 1, length(lambdas) );
     
     % noise added outside for speedy algorithm
     matdeltaX = construct_matdeltaX( n, steady_vecX, vecB, matK, matN, setsJ, powerSetsJ, ...
@@ -19,8 +18,7 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, st
     end
     % disp( ['mistake count: ' num2str(vecMistakes_inv(1)) ] );
     
-    %lambda no longer used
-    %{
+    
     if length(lambdas) > 0
         matK_recs_lasso = matK_rec_useLasso( n, noisy_matdeltaX_tiled, num_samples, lambdas, use_lasso_Nmat );
         for z=1:length(lambdas)
@@ -28,13 +26,7 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, st
             vecMistakes_lasso( 1, z ) = numMistakes_lasso;
         end
     end
-    
-    vecMistakes_avg = [ mean( vecMistakes_inv ) mean( vecMistakes_lasso, 1 ) ];
-    vecMistakes_dev = [ std( vecMistakes_inv ) std( vecMistakes_lasso, 0, 1 ) ];
-    %}
-    
-    vecMistakes_avg = vecMistakes_inv;
-    vecMistakes_dev = std( vecMistakes_inv );
+   
 
 end
 

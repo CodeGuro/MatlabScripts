@@ -21,13 +21,14 @@ function numMistakes = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimi
     end
 
     % algorithm starts here
-    [ numMisakes_avg_Msamples, numMisakes_devs_Msamples ] = sample_numMistakes_nmatrices( n, ...
+    [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nmatrices( n, ...
         itDiff_threshold, mistake_threshold, maxIterations, numMatrix_samples, ...
         perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
         A_limiter );
 
-    % output
+    % output (plotting functionality disabled)
     if plotting_bool
+        %{
         plot_x = (ones( 1 + length(lambdas), 1 ) * sigmas)';
         plot_y = numMisakes_avg_Msamples;
         plot_devs = numMisakes_devs_Msamples;
@@ -49,6 +50,7 @@ function numMistakes = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimi
             'A limiter=' num2str(A_limiter) ', and ' num2str(numMatrix_samples) ' matrices sampled']} );
         %axis( [ sigmas(1) sigmas(end) 0 10] );
         axis('auto');
+        %}
     end
     
     numMistakes = numMisakes_avg_Msamples;
