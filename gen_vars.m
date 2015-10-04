@@ -1,4 +1,4 @@
-function [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_vars( n, A_limiter )
+function [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN, Structargs ] = gen_vars( n, A_limiter )
 
     matA = rand(n,n) > A_limiter;
     matA( logical( eye( n ) ) ) = 0;
@@ -32,7 +32,7 @@ function [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen
         for j = 1 : size( powerSetsJ{ i }, 2 )
             alphas{ i }{ j } = rand();
         end
-    end
-
+    end    
+    
 end
 

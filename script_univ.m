@@ -1,5 +1,5 @@
 function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
-    perturbAmount_real, numSamples_int, mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool )
+    perturbAmount_real, numSamples_int, mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool, Structargs )
 
     % options
     linear = linear_bool; %false; % flag to determine whether script uses linear or nonlinear network
