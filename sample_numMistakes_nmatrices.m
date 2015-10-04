@@ -9,13 +9,8 @@ function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nma
 
         disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
 
-        matA = rand(n,n) > A_limiter;
-        matA( logical( eye( n ) ) ) = 0;
-        b_min = 1E-5;
-        b_max = 1;
-        vecB = b_min + (b_max - b_min).*rand( [n,1] );
         % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
-        [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA );
+        [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_vars( n, A_limiter );
 
         % find the steady state
         if linear

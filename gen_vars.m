@@ -1,4 +1,10 @@
-function [ setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_nonlin_vars( n, matA )
+function [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_vars( n, A_limiter )
+
+    matA = rand(n,n) > A_limiter;
+    matA( logical( eye( n ) ) ) = 0;
+    b_min = 1E-5;
+    b_max = 1;
+    vecB = b_min + (b_max - b_min).*rand( [n,1] );
 
     matN = matA * 2;
     matK = zeros( n, n );
