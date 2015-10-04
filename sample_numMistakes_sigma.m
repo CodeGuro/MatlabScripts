@@ -19,7 +19,7 @@ function [ vecMistakes_avg, vecMistakes_dev  ] = sample_numMistakes_sigma( n, st
     if length(lambdas) > 0
         matK_recs_lasso = matK_rec_useLasso( n, noisy_matdeltaX_tiled, num_samples, lambdas, use_lasso_Nmat );
         for z=1:length(lambdas)
-            numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) > mistake_threshold ) );
+            numMistakes_lasso = nnz( logical( matA ) - logical( abs( matK_recs_lasso(:,:,z) ) ) );
             vecMistakes_lasso( 1, z ) = numMistakes_lasso;
         end
     end
