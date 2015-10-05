@@ -7,7 +7,7 @@ function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nma
     matMistakes_lasso_sigmaxlambdas = nan( length(sigmas), length(lambdas), numMatrix_samples );
     for M_sample = 1:numMatrix_samples
 
-        disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
+        % disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
 
         % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
         if isempty(fieldnames(Structargs_param))
