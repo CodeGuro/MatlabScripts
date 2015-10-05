@@ -4,8 +4,8 @@ n_int = 10;
 Alimiter_real = 0.9;
 numMatSamplesInternal_int = 1;
 numMatSamplesExternal_int = 8;
-sigmas_vecreal = [ 0.05 ];
-lambdas_vecreal = [];
+sigmas_vecreal = [ 0.04 ];
+lambdas_vecreal = 0:0.001:0.1;
 plotting_bool = false;
 mistakeThresh_real = 1E-3;
 numSamples_int = 2000;
@@ -13,6 +13,7 @@ perturbAmount_vec = [ 0.01:0.02:0.2 0.3 0.5 ];
 numsamples_vec = [1 5 10 50 100 500 1000 3000 5000 ];
 mistakeThresh_real_vec = [ 1E-3 5E-3 2E-2 2E-2 6E-2 1E-1 2E-1 4E-1 9E-1 2];
 numMistakes_inv = nan( length(perturbAmount_vec), length(numsamples_vec), length(mistakeThresh_real_vec), numMatSamplesExternal_int );
+numMistakes_lasso = nan( length(perturbAmount_vec), length(numsamples_vec), length(lambdas_vecreal), numMatSamplesExternal_int );
 
 for matsample = 1:numMatSamplesExternal_int
     Structargs = gen_vars( n_int, Alimiter_real );
@@ -24,11 +25,13 @@ for matsample = 1:numMatSamplesExternal_int
                 perturbAmount_real, numSamples_int, mistakeThresh_real_vec, sigmas_vecreal,...
                 lambdas_vecreal, plotting_bool, Structargs );
             numMistakes_inv(i,j,:,matsample) = vecMistakes_avg_inv;
+            numMistakes_lasso(i,j,:,matsample) = vecMistakes_avg_lasso;
         end
     end
 end
 
 numMistakes_inv_avg = mean( numMistakes_inv, 4 );
+numMistakes_lasso_avg = mean( numMistakes_lasso, 4 );
 
 % dimension1=perturbamount
 % dimension2=numsamples_amount
