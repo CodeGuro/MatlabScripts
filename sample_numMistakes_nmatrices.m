@@ -1,7 +1,7 @@
 function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nmatrices( n, ...
             itDiff_threshold, mistake_threshold, maxIterations, numMatrix_samples, ...
             perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
-            A_limiter, Structargs )
+            A_limiter, Structargs_param )
 
     matMistakes_inv_sigmaxthresh = nan( length(sigmas), length(mistake_threshold), numMatrix_samples );
     matMistakes_lasso_sigmaxlambdas = nan( length(sigmas), length(lambdas), numMatrix_samples );
@@ -10,7 +10,16 @@ function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nma
         disp( [ 'sampling matrix: ' num2str(M_sample) ' out of ' num2str(numMatrix_samples) ] );
 
         % generate setsJ, powerSetsJ, and matK, and other nonlinear vars
-        [ matA, vecB, setsJ, powerSetsJ, alphas, alpha_null, matK, matN ] = gen_vars( n, A_limiter );
+        if isempty(fieldnames(Structargs_param))
+            Structargs = gen_vars( n, A_limiter );
+        else
+            Structargs = Structargs_param;
+        end
+        fields = fieldnames( Structargs );
+        for field_it = 1:length(fields)
+            field = fields{field_it};
+            eval(sprintf([field '=%s;'], 'Structargs.(field)'));
+        end
 
         % find the steady state
         if linear
