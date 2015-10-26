@@ -4,25 +4,28 @@ n_int = 10;
 Alimiter_real = 0.9;
 numMatSamplesInternal_int = 1;
 numMatSamplesExternal_int = 10;
-sigmas_vecreal = [ 1E-4 ];
+sigmas_vecreal = [ 1E-2 ];
 lambdas_vecreal = [ 0 1E-5:1E-5:1E-4 2E-4:1E-4:1E-3 2E-3:1E-3:1E-2 2E-2:1E-2:1E-1 ];
 plotting_bool = false;
-perturbAmount_vec = [ 1E-2 ];
-numsamples_vec = [ 1:10:400 ];
+perturbAmount_vec = [ 1E-3:1E-3:1E-2 2E-2:1E-2:1E-1 2E-1:1E-1:1E-0 ];
+numsamples_vec = [ 1:9 10:10:100 200:100:1000 2000:1000:10000 20000:10000:100000 200000:100000:600000 ];
 mistakeThresh_real_vec = [ 1E-6:1E-6:1E-5 2E-5:1E-5:1E-4 2E-4:1E-4:1E-3 2E-3:1E-3:1E-2 2E-2:1E-2:1E-1 2E-1:1E-1:1E-0];
 numMistakes_inv = nan( length(perturbAmount_vec), length(numsamples_vec), length(mistakeThresh_real_vec), numMatSamplesExternal_int );
 numMistakes_lasso = nan( length(perturbAmount_vec), length(numsamples_vec), length(lambdas_vecreal), numMatSamplesExternal_int );
+nonoise_inv = nan( length( perturbAmount_vec ), length( mistakeThresh_real_vec ), numMatSamplesExternal_int );
+nonoise_lasso = nan( length( perturbAmount_vec ), length( lambdas_vecreal ), numMatSamplesExternal_int ); 
+
 
 for matsample = 1:numMatSamplesExternal_int
     disp( ['sampling matrix ' num2str(matsample) ' of ' num2str(numMatSamplesExternal_int) ] );
     Structargs = gen_vars( n_int, Alimiter_real );
-    [ bestcase_inv_vec, bestcase_lasso_vec ] = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamplesInternal_int,...
-                perturbAmount_vec, 1, mistakeThresh_real_vec, 0,...
-                lambdas_vecreal, plotting_bool, Structargs );
-    bestcase_inv( matsample, : ) = bestcase_inv_vec;
-    bestcase_lasso( matsample, : ) = bestcase_lasso_vec;
     for i=1:length(perturbAmount_vec)
         perturbAmount_real =  perturbAmount_vec(i);
+        [nonoise_inv_vec, nonoise_lasso_vec] = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamplesInternal_int,...
+            perturbAmount_real, 1, mistakeThresh_real_vec, 0,...
+            lambdas_vecreal, plotting_bool, Structargs );
+        nonoise_inv( i, :, matsample ) = nonoise_inv_vec;
+        nonoise_lasso( i, :, matsample ) = nonoise_lasso_vec;        
         disp( [ 'sampling perturbation ' num2str(i) ' of ' num2str(length(perturbAmount_vec)) ': ' num2str( perturbAmount_real ) ] );
         for j=1:length(numsamples_vec)
             numSamples_int = numsamples_vec(j);

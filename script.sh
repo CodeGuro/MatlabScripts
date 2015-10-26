@@ -13,4 +13,4 @@ module purge
 module load matlab
 #module load cplex    (this line is a comment with #)
 
-matlab -nodesktop -nodisplay < script_runner.m > logfile_$SLURM_JOBID
+matlab -nodesktop -nodisplay < script_tester.m > logfile_$SLURM_JOBID
