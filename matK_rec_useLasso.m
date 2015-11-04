@@ -1,11 +1,11 @@
-function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_lasso_Nmat )
+function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_Quadratic )
     matK_recs = nan( n, n, size(lambdas, 2) );
     
     for p_idx = 1 : n
         selection_rows = setdiff( 1:n, p_idx );
         selection_cols = setdiff( 1:n*num_samples, p_idx + (0:(num_samples-1))*n );
         
-        if use_lasso_Nmat
+        if use_Quadratic
             
             lasso_mat = nan( n*(n+1)/2 - 1, (n-1)*num_samples );
             for num_sample = 1:num_samples
@@ -30,7 +30,7 @@ function matK_recs = matK_rec_useLasso( n, matdeltaX, num_samples, lambdas, use_
             matK_recs( p_idx, :, z ) = insert(matK_cur_rows(z, :), insertion_element, p_idx);
         end
         
-        if use_lasso_Nmat
+        if use_Quadratic
             for lambda_idx = 1:length(lambdas)
                 Nmat_gene_pidx = zeros( n, n );
                 Nmat_gene_pidx( nonzero_indices ) = matN_cur_rows( lambda_idx, : );

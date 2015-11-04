@@ -1,9 +1,11 @@
-function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = script_univ( n_int, linear_bool, useLassoNmat_bool, Alimiter_real, numMatSamples_int,...
-    perturbAmount_real, numSamples_int, mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool, Structargs )
+function [ vecMistakes_avg_inv, vecMistakes_avg_lasso, vecMistakes_avg_Qlasso ] = script_univ( n_int, linear_bool, ...
+    useLasso_bool, useQLasso_bool, Alimiter_real, numMatSamples_int, perturbAmount_real, numSamples_int, ...
+    mistakeThresh_real, sigmas_vecreal, lambdas_vecreal, plotting_bool, Structargs )
 
     % options
     linear = linear_bool; %false; % flag to determine whether script uses linear or nonlinear network
-    use_lasso_Nmat = useLassoNmat_bool; %false; % flag to determine whether the quadratic method is used at lasso
+    use_lasso = useLasso_bool; % flag to determine whether lasso is used
+    use_Qlasso = useQLasso_bool; % flag to determine whether quadratic lasso is used
     n = n_int; %5; % size of the matrix (n by n)
     A_limiter = Alimiter_real; %0.8; % limits the generation of nonzeros for matA ([0,1] inclusive)
     numMatrix_samples = numMatSamples_int; %8; % number of unique matrices sampled (new matA generated each time)
@@ -21,9 +23,9 @@ function [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = script_univ( n_int, li
     end
 
     % algorithm starts here
-    [ vecMistakes_avg_inv, vecMistakes_avg_lasso ] = sample_numMistakes_nmatrices( n, ...
+    [ vecMistakes_avg_inv, vecMistakes_avg_lasso, vecMistakes_avg_Qlasso ] = sample_numMistakes_nmatrices( n, ...
         itDiff_threshold, mistake_threshold, maxIterations, numMatrix_samples, ...
-        perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso_Nmat, ...
+        perturb_amount, num_samples, lambdas, sigmas, linear, use_lasso, use_Qlasso, ...
         A_limiter, Structargs );
 
     % output (plotting functionality disabled)
