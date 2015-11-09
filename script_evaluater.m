@@ -1,7 +1,7 @@
 load( 'ws_data_2.mat' );
 
 fname_pert = 'perturbations';
-fname_reps = 'repititions';
+fname_reps = 'repetitions';
 
 mkdir( fname_pert );
 mkdir( fname_reps );
@@ -49,8 +49,8 @@ for ms = 1:numMatSamplesExternal_int
     mkdir( fname_rep_thresh );
     
     for perturbidx = 1:length( perturbAmount_vec )
-        fname_rep_thresh = [fname_rep_thresh '/perturb_' num2str(perturbidx)];
-        mkdir(fname_rep_thresh);
+        fname_rep_thresh_cur = [fname_rep_thresh '/perturb_' num2str(perturbidx)];
+        mkdir(fname_rep_thresh_cur);
         for threshidx = 1:length(mistakeThresh_real_vec)
             yvec_inv_thresh = numMistakes_inv( perturbidx, :, threshidx, ms );
             fig = plot( numsamples_vec, yvec_inv_thresh );
@@ -58,7 +58,9 @@ for ms = 1:numMatSamplesExternal_int
                 ' at perturb=' num2str(perturbAmount_vec(perturbidx)) ] );
             xlabel( 'repetitions' );
             ylabel( 'recov mistakes' );
-            saveas( fig, [ fname_rep_thresh '/thresh_' num2str( threshidx ) ] );
+            fname = [ fname_rep_thresh_cur '/thresh_' num2str( threshidx ) ];
+            saveas( fig, fname );
+            disp(['saving: ' fname] );
         end
         
         for lambdaidx = 1:length(lambdas_vecreal)
@@ -68,7 +70,9 @@ for ms = 1:numMatSamplesExternal_int
                 ' at perturb=' num2str(perturbAmount_vec(perturbidx)) ] );
             xlabel( 'repetitions' );
             ylabel( 'recov mistakes' );
-            saveas( fig, [ fname_rep_thresh '/lambda_' num2str( lambdaidx ) ] );
+            fname = [ fname_rep_thresh_cur '/lambda_' num2str( lambdaidx ) ];
+            saveas( fig, fname );
+            disp( ['saving: ' fname ] );
         end
     end
     
