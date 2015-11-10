@@ -8,9 +8,13 @@ mkdir( fname_reps );
 
 % save bulk
 for ms = 1:numMatSamplesExternal_int
-   
+    
+    mat_path = [ fname_reps '/mat' num2str(ms) ];
+    mkdir( mat_path );
+    
     surface_path = [mat_path '/surface'];
     mkdir( surface_path );
+
     
     % create the perturb x thresh surfaces
     sbisect_path = [ surface_path '/surface_bisect' ];
@@ -51,6 +55,7 @@ for ms = 1:numMatSamplesExternal_int
     xlabel( 'perturbation amount' );
     ylabel( 'samples' );
     zlabel( 'mistakes' );
+    set(gca, 'XScale', 'log', 'YScale', 'log' );
     title( 'linear recovery method' );
     saveas( fig, [ surface_path '/surface_lin.fig' ] );
     
@@ -60,6 +65,7 @@ for ms = 1:numMatSamplesExternal_int
     xlabel( 'perturbation amount' );
     ylabel( 'samples' );
     zlabel( 'mistakes' );
+    set(gca, 'XScale', 'log', 'YScale', 'log' );
     title( 'linear recovery method' );
     saveas( fig, [ surface_path '/surface_lasso.fig' ] );
     
