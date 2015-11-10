@@ -1,4 +1,4 @@
-load( 'ws_data_3.mat' );
+load( 'ws_data_2.mat' );
 
 fname_pert = 'perturbations';
 fname_reps = 'repetitions';
