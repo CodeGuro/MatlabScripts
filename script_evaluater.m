@@ -1,4 +1,4 @@
-load( 'ws_data_2.mat' );
+load( 'ws_data_3.mat' );
 
 fname_pert = 'perturbations';
 fname_reps = 'repetitions';
@@ -37,7 +37,7 @@ for ms = 1:numMatSamplesExternal_int
     % create the perturb x lasso surfaces
     lasso_sbisect_path = [sbisect_path '/lasso' ];
     mkdir( lasso_sbisect_path );
-    for it = 1:length(lambdas_vecreal)
+    for it = 1:length(numsamples_vec)
         clear surface;
         surface( :, : ) = numMistakes_lasso( :, it, :, ms );
         fig = surf( perturbAmount_vec, lambdas_vecreal, surface' );
