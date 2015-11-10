@@ -1,4 +1,4 @@
-load( 'ws_data_2.mat' );
+load( 'ws_data_3.mat' );
 
 fname_pert = 'perturbations';
 fname_reps = 'repetitions';
@@ -35,7 +35,7 @@ for ms = 1:numMatSamplesExternal_int
     end
     
     % create the perturb x lasso surfaces
-    lasso_sbisect_path = [sbisect_path '/lasso' ];
+    lasso_sbisect_path = [ sbisect_path '/lasso' ];
     mkdir( lasso_sbisect_path );
     for it = 1:length(numsamples_vec)
         clear surface;
@@ -47,6 +47,21 @@ for ms = 1:numMatSamplesExternal_int
         set(gca, 'XScale', 'log', 'YScale', 'log' );
         title( { 'perturbation X lambda ' ,[ 'slice at repetitions = ' num2str(numsamples_vec( it )) ] } );
         saveas( fig, [lasso_sbisect_path '/rep_' num2str(it)] );
+    end
+    
+    % create the perturb x qlasso surfaces
+    qlasso_sbisect_path = [ sbisect_path '/Qlasso' ];
+    mkdir( qlasso_sbisect_path );
+    for it = 1:length(numsamples_vec)
+        clear surface;
+        surface( :, : ) = numMistakes_Qlasso( :, it, :, ms );
+        fig = surf( perturbAmount_vec, lambdas_vecreal, surface' );
+        xlabel( 'perturbation amount' );
+        ylabel( 'lambda' );
+        zlabel( 'mistakes' );
+        set(gca, 'XScale', 'log', 'YScale', 'log' );
+        title( { 'perturbation X lambda : QLasso' ,[ 'slice at repetitions = ' num2str(numsamples_vec( it )) ] } );
+        saveas( fig, [qlasso_sbisect_path '/rep_' num2str(it)] );
     end
     
     % create the perturb x sample linear surface
@@ -69,16 +84,34 @@ for ms = 1:numMatSamplesExternal_int
     title( 'linear recovery method' );
     saveas( fig, [ surface_path '/surface_lasso.fig' ] );
     
+    % create the perturb x sample Qlasso surface
+    qlassosurf = min( numMistakes_Qlasso, [], 3 );
+    fig = surf( perturbAmount_vec, numsamples_vec, qlassosurf( :, :, ms )' );
+    xlabel( 'perturbation amount' );
+    ylabel( 'samples' );
+    zlabel( 'mistakes' );
+    set(gca, 'XScale', 'log', 'YScale', 'log' );
+    title( 'linear recovery method' );
+    saveas( fig, [ surface_path '/surface_Qlasso.fig' ] );
+    
     
 end
 
+yvec_qlasso = nan( 1, length( perturbAmount_vec ) );
 yvec_lasso = nan( 1, length( perturbAmount_vec ) );
 yvec_inv = nan( 1, length( perturbAmount_vec ) );
 
 for i=1:length( perturbAmount_vec )
+    yvec_qlasso( i ) = min( min( numMistakes_Qlasso_avg(i,:,:) ) );
     yvec_lasso( i ) = min( min( numMistakes_lasso_avg(i,:,:) ) );
     yvec_inv( i ) = min( min( numMistakes_inv_avg(i,:,:) ) );
 end
+
+fig = plot( perturbAmount_vec, yvec_qlasso );
+legend( 'mistakes across perturbations' );
+xlabel( 'samples' ); ylabel( 'mistakes' );
+title('min(lamdasxrepititions), avgMat, Quadratic lasso recovery smethod');
+saveas( fig, [ fname_pert '/qlasso_avg' ] );
 
 fig = plot( perturbAmount_vec, yvec_lasso );
 legend( 'mistakes across perturbations' );
@@ -93,15 +126,24 @@ xlabel( 'samples' ); ylabel( 'mistakes' );
 saveas( fig, [ fname_pert '/lin_avg' ] );
 
 % save bulk
+qlasso_pert = [fname_pert '/qlasso'];
+mkdir( qlasso_pert );
 lasso_pert = [fname_pert '/lasso'];
 mkdir( lasso_pert );
 lin_pert = [fname_pert '/linear'];
 mkdir( lin_pert );
 for ms = 1:numMatSamplesExternal_int
     for i=1:length( perturbAmount_vec )
+        yvec_qlasso( i ) = min( min( numMistakes_Qlasso(i,:,:,ms) ) );
         yvec_lasso( i ) = min( min( numMistakes_lasso(i,:,:,ms) ) );
         yvec_inv( i ) = min( min( numMistakes_inv(i,:,:,ms) ) );
     end
+    
+    fig = plot( perturbAmount_vec, yvec_qlasso );
+    legend( 'mistakes across perturbations' );
+    xlabel( 'perturbation' ); ylabel( 'mistakes' );
+    title({'min(lamdasxrepititions), quadratic lasso recovery smethod', ['mat #' num2str(ms)]});
+    saveas( fig, [ qlasso_pert '/lasso_mat_' num2str(ms) ] );
     
     fig = plot( perturbAmount_vec, yvec_lasso );
     legend( 'mistakes across perturbations' );
