@@ -33,56 +33,10 @@ for ms = 1:numMatSamplesExternal_int
         yvec_inv( j ) = min( min( numMistakes_inv(:,j,:,ms) ) );
     end
     
-    fig = plot( numsamples_vec, yvec_lasso );
-    legend( 'mistakes across repetitions' );
-    xlabel( 'samples' ); ylabel( 'mistakes' );
-    title('min(lambdasXperturb), avgMat, lasso recovery smethod');
-    saveas( fig, [ fname_reps '/lasso_sample_' num2str(ms) ] );
-
-    fig = plot( numsamples_vec, yvec_inv );
-    legend( 'mistakes across repetitions' );
-    title('min(thresholdxperturb), avgMat, linear recovery method');
-    xlabel( 'samples' ); ylabel( 'mistakes' );
-    saveas( fig, [ fname_reps '/inv_sample_' num2str(ms) ] );
-    
     mat_path = [ fname_reps '/mat' num2str(ms) ];
     mkdir( mat_path );
     bisect_path = [ mat_path '/bisect' ];
     mkdir( bisect_path );
-  %{  
-    for perturbidx = 1:length( perturbAmount_vec )
-        perturb_path = [ bisect_path '/perturb_' num2str(perturbidx)];
-        mkdir(perturb_path);
-       
-        thresh_path = [ perturb_path '/thresh' ];
-        mkdir(thresh_path);
-        for threshidx = 1:length(mistakeThresh_real_vec)
-            yvec_inv_thresh = numMistakes_inv( perturbidx, :, threshidx, ms );
-            fig = plot( numsamples_vec, yvec_inv_thresh );
-            title( [ 'threshold = ' num2str( mistakeThresh_real_vec(threshidx) )...
-                ' at perturb=' num2str(perturbAmount_vec(perturbidx)) ] );
-            xlabel( 'repetitions' );
-            ylabel( 'recov mistakes' );
-            fname = [ thresh_path '/thresh_' num2str( threshidx ) ];
-            saveas( fig, fname );
-            disp(['saving: ' fname] );
-        end
-        
-        lambda_path = [ perturb_path '/lambda' ];
-        mkdir(lambda_path);
-        for lambdaidx = 1:length(lambdas_vecreal)
-            yvec_lasso_lambda = numMistakes_lasso( perturbidx, :, lambdaidx, ms );
-            fig = plot( numsamples_vec, yvec_lasso_lambda );
-            title( [ 'lambda = ' num2str( lambdas_vecreal(lambdaidx) )...
-                ' at perturb=' num2str(perturbAmount_vec(perturbidx)) ] );
-            xlabel( 'repetitions' );
-            ylabel( 'recov mistakes' );
-            fname = [ lambda_path '/lambda_' num2str( lambdaidx ) ];
-            saveas( fig, fname );
-            disp( ['saving: ' fname ] );
-        end        
-    end
-    %}
     
     surface_path = [mat_path '/surface'];
     mkdir( surface_path );
@@ -126,6 +80,7 @@ for ms = 1:numMatSamplesExternal_int
     zlabel( 'mistakes' );
     title( 'linear recovery method' );
     saveas( fig, [ surface_path '/surface_lin.fig' ] );
+    
     % create the perturb x sample lasso surface
     lassosurf = min( numMistakes_lasso, [], 3 );
     fig = surf( perturbAmount_vec, numsamples_vec, lassosurf( :, :, ms )' );
@@ -140,7 +95,6 @@ end
 
 yvec_lasso = nan( 1, length( perturbAmount_vec ) );
 yvec_inv = nan( 1, length( perturbAmount_vec ) );
-
 
 for i=1:length( perturbAmount_vec )
     yvec_lasso( i ) = min( min( numMistakes_lasso_avg(i,:,:) ) );
@@ -157,9 +111,11 @@ fig = plot( perturbAmount_vec, yvec_inv );
 legend( 'mistakes across perturbations' );
 title('min(thresholdxrepititions), avgMat, linear recovery method');
 xlabel( 'samples' ); ylabel( 'mistakes' );
-saveas( fig, [ fname_pert '/inv_avg' ] );
+saveas( fig, [ fname_pert '/lin_avg' ] );
 
 % save bulk
+lasso_pert = [fname_pert '/lasso'];
+lin_pert = [fname_pert '/linear'];
 for ms = 1:numMatSamplesExternal_int
     for i=1:length( perturbAmount_vec )
         yvec_lasso( i ) = min( min( numMistakes_lasso(i,:,:,ms) ) );
@@ -169,12 +125,12 @@ for ms = 1:numMatSamplesExternal_int
     fig = plot( perturbAmount_vec, yvec_lasso );
     legend( 'mistakes across perturbations' );
     xlabel( 'perturbation' ); ylabel( 'mistakes' );
-    title('min(lamdasxrepititions), avgMat, lasso recovery smethod');
-    saveas( fig, [ fname_pert '/lasso_sample_' num2str(ms) ] );
+    title({'min(lamdasxrepititions), lasso recovery smethod', ['mat #' num2str(ms)]});
+    saveas( fig, [ lasso_pert '/lasso_mat_' num2str(ms) ] );
 
     fig = plot( perturbAmount_vec, yvec_inv );
     legend( 'mistakes across perturbations' );
-    title('min(thresholdxrepititions), avgMat, linear recovery method');
+    title({'min(thresholdxrepititions), linear recovery method', ['mat #' num2str(ms)]});
     xlabel( 'perturbation' ); ylabel( 'mistakes' );
-    saveas( fig, [ fname_pert '/inv_sample_' num2str(ms) ] );
+    saveas( fig, [ lin_pert '/inv_mat_' num2str(ms) ] );
 end
